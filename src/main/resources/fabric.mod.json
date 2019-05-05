@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "bannerpp",
+  "version": "${version}",
+
+  "name": "Banner++",
+  "description": "More banner and shield patterns.",
+  "authors": [
+    "kvverti"
+  ],
+  "contact": {
+    "homepage": "https://github.com/kvverti/banner-plus-plus",
+    "sources": "https://github.com/kvverti/banner-plus-plus"
+  },
+
+  "license": "MIT",
+  "icon": "assets/bannerpp/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.kvverti.bannerpp.Bannerpp"
+    ]
+  },
+  "mixins": [
+    "bannerpp.mixins.json"
+  ],
+  "custom": {
+    "mm:early_risers": [
+        "io.github.kvverti.bannerpp.NewBannerPatterns"
+    ]
+  },
+  "requires": {
+    "fabricloader": ">=0.4.0",
+    "fabric": "*",
+    "mm": ">=1.4"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}
