@@ -10,7 +10,10 @@ public class NewBannerPatterns implements Runnable {
         String bannerPatternClass = "net.minecraft." + (dev ? "block.entity.BannerPattern" : "class_2582");
         // dye banner patterns
         ClassTinkerers.enumBuilder(bannerPatternClass, String.class, String.class, String.class, String.class, String.class)
-            .addEnum("BANNERPP_STRIPE_CENTER_FIFTH", "bannerpp_stripe_center_fifth", "bpp_scf", null, null, null)
+            .addEnum("BANNERPP_STRIPE_CENTER_LEFT_FIFTH", "bannerpp_stripe_center_left_fifth", "bpp_clf", null, null, null)
+            .addEnum("BANNERPP_STRIPE_CENTER_RIGHT_FIFTH", "bannerpp_stripe_center_right_fifth", "bpp_crf", null, null, null)
+            .addEnum("BANNERPP_STRIPE_MIDDLE_UPPER_FIFTH", "bannerpp_stripe_middle_upper_fifth", "bpp_muf", null, null, null)
+            .addEnum("BANNERPP_STRIPE_MIDDLE_LOWER_FIFTH", "bannerpp_stripe_middle_lower_fifth", "bpp_mof", null, null, null)
             .build();
         // special banner patterns
         ClassTinkerers.enumBuilder(bannerPatternClass, String.class, String.class)
