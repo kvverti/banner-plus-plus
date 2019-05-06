@@ -8,6 +8,7 @@ import net.minecraft.container.ContainerType;
 import net.minecraft.container.LoomContainer;
 import net.minecraft.container.Property;
 import net.minecraft.container.Slot;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.BannerPatternItem;
 import net.minecraft.item.ItemStack;
@@ -38,6 +39,21 @@ public abstract class MixinLoomContainer extends Container {
     // mixin members
 
     private static final BannerPattern[] patterns = BannerPattern.values();
+
+    /**
+     * Sets the output slot based on which background index the client clicks.
+     */
+    @Overwrite
+    public boolean onButtonClick(PlayerEntity player, int patternIdxPlus1) {
+        int patternIdx = patternIdxPlus1 - 1;
+        if(patternIdx >= 0 && patternIdx < LoomPattern.RECIPE_PATTERNS.size()) {
+            this.selectedPattern.set(LoomPattern.RECIPE_PATTERNS.get(patternIdx).ordinal());
+            this.updateOutputSlot();
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Determines the selected pattern and output slot on content change.
