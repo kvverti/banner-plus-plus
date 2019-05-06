@@ -3,9 +3,11 @@
   "package": "io.github.kvverti.bannerpp.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinBannerPattern",
+    "MixinLoomContainer"
   ],
   "client": [
-    "ExampleMixin"
+    "client.MixinLoomScreen"
   ],
   "injectors": {
     "defaultRequire": 1
