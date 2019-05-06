@@ -18,6 +18,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+/**
+ * Overwrites LoomContainer methods to correctly determine dye banner patterms.
+ */
 @Mixin(LoomContainer.class)
 public abstract class MixinLoomContainer extends Container {
 
@@ -46,6 +49,8 @@ public abstract class MixinLoomContainer extends Container {
     @Overwrite
     public boolean onButtonClick(PlayerEntity player, int patternIdxPlus1) {
         int patternIdx = patternIdxPlus1 - 1;
+        // replace conditional to check for dye pattern index instead of
+        // pattern ID
         if(patternIdx >= 0 && patternIdx < LoomPattern.RECIPE_PATTERNS.size()) {
             this.selectedPattern.set(LoomPattern.RECIPE_PATTERNS.get(patternIdx).ordinal());
             this.updateOutputSlot();
@@ -64,6 +69,8 @@ public abstract class MixinLoomContainer extends Container {
         ItemStack dye = this.dyeSlot.getStack();
         ItemStack pattern = this.patternSlot.getStack();
         ItemStack output = this.outputSlot.getStack();
+        // replace comparing pattern ID to a hardcoded limit with directly
+        // querying the desired property (added via mixin)
         boolean selectedNeedsItem = ((LoomPattern)(Object)patterns[this.selectedPattern.get()]).requiresPatternItem();
         if (output.isEmpty() || !banner.isEmpty() && !dye.isEmpty() && this.selectedPattern.get() > 0 && (!selectedNeedsItem || !pattern.isEmpty())) {
             if (!pattern.isEmpty() && pattern.getItem() instanceof BannerPatternItem) {

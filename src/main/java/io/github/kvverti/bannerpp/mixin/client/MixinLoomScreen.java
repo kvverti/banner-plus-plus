@@ -77,9 +77,12 @@ public abstract class MixinLoomScreen extends ContainerScreen<LoomContainer> {
             bgOffsetX = left + 60;
             bgOffsetY = top + 13;
             endPatternButtonId = (this.firstPatternButtonId - 1) + 16;
+            // repurpose this.firstPatternButtonId to be a pattern index into
+            // LoomPatterns.RECIPE_PATTERNS (1-indexed), and remove the hardcoded
+            // assumption of (COUNT - 5) dye banner patterns
             int displayPatternCount = Math.min(endPatternButtonId, LoomPattern.RECIPE_PATTERNS.size());
-
             for(int patternIdx = this.firstPatternButtonId - 1; patternIdx < displayPatternCount; ++patternIdx) {
+                // derive pattern ID from pattern index
                 int patternId = LoomPattern.RECIPE_PATTERNS.get(patternIdx).ordinal();
                 int colPixelPos = bgOffsetX + (patternIdx - this.firstPatternButtonId + 1) % 4 * 14;
                 int rowPixelPos = bgOffsetY + (patternIdx - this.firstPatternButtonId + 1) / 4 * 14;
