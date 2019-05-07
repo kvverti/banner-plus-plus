@@ -18,26 +18,26 @@ import org.apache.logging.log4j.Logger;
 
 public class Bannerpp implements ModInitializer {
 
-	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger(Bannerpp.class);
+    @SuppressWarnings("unused")
+    private static final Logger log = LogManager.getLogger(Bannerpp.class);
 
-	// metadata
-	public static final String MODID = "bannerpp";
+    // metadata
+    public static final String MODID = "bannerpp";
 
-	// custom banner patterns
-	public static final BannerPattern PIG = ClassTinkerers.getEnum(BannerPattern.class, "BANNERPP_PIG");
+    // custom banner patterns
+    public static final BannerPattern PIG = ClassTinkerers.getEnum(BannerPattern.class, "BANNERPP_PIG");
 
-	// custom items
-	public static final Item PIG_BANNER_PATTERN = new BannerPatternItem(PIG, new Item.Settings().itemGroup(ItemGroup.MISC));
+    // custom items
+    public static final Item PIG_BANNER_PATTERN = new BannerPatternItem(PIG, new Item.Settings().itemGroup(ItemGroup.MISC));
 
-	@Override
-	public void onInitialize() {
-		// Register items
-		Registry.register(Registry.ITEM, new Identifier(MODID, "pig_banner_pattern"), PIG_BANNER_PATTERN);
-		// log patterns
-		log.info("Loom pattern item required:");
-		for(BannerPattern p : BannerPattern.values()) {
-			log.info(p.getName() + ": " + ((LoomPattern)(Object)p).requiresPatternItem());
-		}
-	}
+    @Override
+    public void onInitialize() {
+        // Register items
+        Registry.register(Registry.ITEM, new Identifier(MODID, "pig_banner_pattern"), PIG_BANNER_PATTERN);
+        // log patterns
+        log.info("Loom pattern item required:");
+        for(BannerPattern p : BannerPattern.values()) {
+            log.info(p.getName() + ": " + ((LoomPattern)(Object)p).requiresPatternItem());
+        }
+    }
 }
