@@ -1,7 +1,5 @@
 package io.github.kvverti.bannerpp;
 
-import com.chocohead.mm.api.ClassTinkerers;
-
 import io.github.kvverti.bannerpp.api.LoomPattern;
 
 import net.fabricmc.api.ModInitializer;
@@ -25,7 +23,7 @@ public class Bannerpp implements ModInitializer {
     public static final String MODID = "bannerpp";
 
     // custom banner patterns
-    public static final BannerPattern PIG = ClassTinkerers.getEnum(BannerPattern.class, "BANNERPP_PIG");
+    public static final BannerPattern PIG = BannerPattern.valueOf("BANNERPP_PIG");
 
     // custom items
     public static final Item PIG_BANNER_PATTERN = new BannerPatternItem(PIG, new Item.Settings().itemGroup(ItemGroup.MISC));
