@@ -26,7 +26,7 @@ public class Bannerpp implements ModInitializer {
     public static final BannerPattern PIG = BannerPattern.valueOf("BANNERPP_PIG");
 
     // custom items
-    public static final Item PIG_BANNER_PATTERN = new BannerPatternItem(PIG, new Item.Settings().itemGroup(ItemGroup.MISC));
+    public static final Item PIG_BANNER_PATTERN = new BannerPatternItem(PIG, new Item.Settings().stackSize(1).itemGroup(ItemGroup.MISC));
 
     @Override
     public void onInitialize() {
