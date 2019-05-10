@@ -1,0 +1,10 @@
+{
+    "type": "crafting_shapeless",
+    "ingredients": [
+        { "item": "minecraft:paper" },
+        { "item": "minecraft:cooked_porkchop" }
+    ],
+    "result": {
+        "item": "bannerpp:pig_banner_pattern"
+    }
+}

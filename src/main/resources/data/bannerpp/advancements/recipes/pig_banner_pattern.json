@@ -1,0 +1,27 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "bannerpp:pig_banner_pattern"
+        ]
+    },
+    "criteria": {
+        "has_cooked_porkchop": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    { "item": "minecraft:cooked_porkchop" }
+                ]
+            }
+        },
+        "has_the_recipe": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "recipe": "bannerpp:pig_banner_pattern"
+            }
+        }
+    },
+    "requirements": [
+        ["has_cooked_porkchop", "has_the_recipe"]
+    ]
+}
