@@ -13,6 +13,8 @@ import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
@@ -54,8 +56,7 @@ public abstract class MixinLoomScreen extends ContainerScreen<LoomContainer> {
 
     /**
      * Get the proper bound on dye banner patterns by redirecting the
-     * `this.patternButtonTextureIds.length - 5` call. Unfortunately we can't
-     * target the whole expression so we just add 5 to our answer.
+     * `this.patternButtonTextureIds.length` call.
      */
     @Redirect(
         method = "drawBackground",
@@ -73,7 +74,26 @@ public abstract class MixinLoomScreen extends ContainerScreen<LoomContainer> {
         )
     )
     private int getProperDyePatternBound(Identifier[] patternButtonTextureIds) {
-        return LoomPattern.RECIPE_PATTERNS.size() + 5;
+        return LoomPattern.RECIPE_PATTERNS.size();
+    }
+
+    /**
+     * Change the dye pattern cutoff constant to zero, since the functionality
+     * is already performed in getProperDyePatternBound.
+     */
+    @ModifyConstant(
+        method = "drawBackground",
+        slice = @Slice(
+            from = @At(
+                value = "FIELD",
+                target = "Lnet/minecraft/client/gui/container/LoomScreen;canApplyDyePattern:Z",
+                ordinal = 1
+            )
+        ),
+        constant = @Constant(intValue = 5, ordinal = 0)
+    )
+    private int removeHardcodedDyePatternCutoff(int cutoff) {
+        return 0;
     }
 
     private static final BannerPattern[] bannerpp_patterns = BannerPattern.values();
