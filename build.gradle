@@ -36,6 +36,7 @@ dependencies {
 
 processResources {
 	inputs.property "version", project.version
+	exclude "**/*.xcf"
 
 	from(sourceSets.main.resources.srcDirs) {
 		include "fabric.mod.json"
@@ -60,6 +61,7 @@ tasks.withType(JavaCompile) {
 task sourcesJar(type: Jar, dependsOn: classes) {
 	classifier = "sources"
 	from sourceSets.main.allSource
+	exclude "**/*.xcf"
 }
 
 jar {
