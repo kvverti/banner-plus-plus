@@ -10,11 +10,11 @@ public interface LoomPattern {
 
     ImmutableList<BannerPattern> RECIPE_PATTERNS =
         ImmutableList.copyOf(Arrays.asList(BannerPattern.values()).stream()
-            .filter(v -> !((LoomPattern)(Object)v).requiresPatternItem())
+            .filter(v -> !((LoomPattern)(Object)v).bannerpp_isSpecial())
             .iterator());
 
     /**
      * Whether this loom pattern requres an item in the pattern slot.
      */
-    boolean requiresPatternItem();
+    boolean bannerpp_isSpecial();
 }

@@ -68,7 +68,7 @@ public abstract class MixinLoomContainer extends Container {
         )
     )
     private int isActuallySpecialPattern(Property self) {
-        boolean special = ((LoomPattern)(Object)patterns[self.get()]).requiresPatternItem();
+        boolean special = ((LoomPattern)(Object)patterns[self.get()]).bannerpp_isSpecial();
         return special ? Integer.MAX_VALUE : 0;
     }
 }

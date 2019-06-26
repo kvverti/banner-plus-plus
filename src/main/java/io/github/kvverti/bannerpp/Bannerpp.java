@@ -1,7 +1,5 @@
 package io.github.kvverti.bannerpp;
 
-import io.github.kvverti.bannerpp.api.LoomPattern;
-
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.block.entity.BannerPattern;
@@ -26,16 +24,11 @@ public class Bannerpp implements ModInitializer {
     public static final BannerPattern PIG = BannerPattern.valueOf("BANNERPP_PIG");
 
     // custom items
-    public static final Item PIG_BANNER_PATTERN = new BannerPatternItem(PIG, new Item.Settings().stackSize(1).itemGroup(ItemGroup.MISC));
+    public static final Item PIG_BANNER_PATTERN = new BannerPatternItem(PIG, new Item.Settings().maxCount(1).group(ItemGroup.MISC));
 
     @Override
     public void onInitialize() {
         // Register items
         Registry.register(Registry.ITEM, new Identifier(MODID, "pig_banner_pattern"), PIG_BANNER_PATTERN);
-        // log patterns
-        log.info("Loom pattern item required:");
-        for(BannerPattern p : BannerPattern.values()) {
-            log.info(p.getName() + ": " + ((LoomPattern)(Object)p).requiresPatternItem());
-        }
     }
 }

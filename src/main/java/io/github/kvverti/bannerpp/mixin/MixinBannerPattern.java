@@ -6,6 +6,7 @@ import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.item.ItemStack;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,10 +17,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BannerPattern.class)
 public abstract class MixinBannerPattern implements LoomPattern {
 
+    @Unique
     private boolean needsItemInLoom;
 
     @Override
-    public boolean requiresPatternItem() {
+    public boolean bannerpp_isSpecial() {
         return needsItemInLoom;
     }
 

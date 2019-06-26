@@ -3,11 +3,11 @@ package io.github.kvverti.bannerpp.mixin.client;
 import io.github.kvverti.bannerpp.api.LoomPattern;
 
 import net.minecraft.block.entity.BannerPattern;
-import net.minecraft.client.gui.ContainerScreen;
-import net.minecraft.client.gui.container.LoomScreen;
+import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
+import net.minecraft.client.gui.screen.ingame.LoomScreen;
 import net.minecraft.container.LoomContainer;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.text.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Identifier;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,9 +19,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
 @Mixin(LoomScreen.class)
-public abstract class MixinLoomScreen extends ContainerScreen<LoomContainer> {
+public abstract class MixinLoomScreen extends AbstractContainerScreen<LoomContainer> {
 
-    private MixinLoomScreen(LoomContainer lc, PlayerInventory pi, TextComponent tc) {
+    private MixinLoomScreen(LoomContainer lc, PlayerInventory pi, Component tc) {
         super(lc, pi, tc);
     }
 
@@ -40,13 +40,13 @@ public abstract class MixinLoomScreen extends ContainerScreen<LoomContainer> {
         slice = @Slice(
             from = @At(
                 value = "FIELD",
-                target = "Lnet/minecraft/client/gui/container/LoomScreen;canApplyDyePattern:Z",
+                target = "Lnet/minecraft/client/gui/screen/ingame/LoomScreen;canApplyDyePattern:Z",
                 ordinal = 1
             )
         ),
         at = @At(
             value = "FIELD",
-            target = "Lnet/minecraft/client/gui/container/LoomScreen;firstPatternButtonId:I"
+            target = "Lnet/minecraft/client/gui/screen/ingame/LoomScreen;firstPatternButtonId:I"
         )
     )
     private int offsetFirstPatternButtonId(LoomScreen self) {
@@ -63,13 +63,13 @@ public abstract class MixinLoomScreen extends ContainerScreen<LoomContainer> {
         slice = @Slice(
             from = @At(
                 value = "FIELD",
-                target = "Lnet/minecraft/client/gui/container/LoomScreen;canApplyDyePattern:Z",
+                target = "Lnet/minecraft/client/gui/screen/ingame/LoomScreen;canApplyDyePattern:Z",
                 ordinal = 1
             )
         ),
         at = @At(
             value = "FIELD",
-            target = "Lnet/minecraft/client/gui/container/LoomScreen;patternButtonTextureIds:[Lnet/minecraft/util/Identifier;",
+            target = "Lnet/minecraft/client/gui/screen/ingame/LoomScreen;patternButtonTextureIds:[Lnet/minecraft/util/Identifier;",
             args = "array=length"
         )
     )
@@ -86,7 +86,7 @@ public abstract class MixinLoomScreen extends ContainerScreen<LoomContainer> {
         slice = @Slice(
             from = @At(
                 value = "FIELD",
-                target = "Lnet/minecraft/client/gui/container/LoomScreen;canApplyDyePattern:Z",
+                target = "Lnet/minecraft/client/gui/screen/ingame/LoomScreen;canApplyDyePattern:Z",
                 ordinal = 1
             )
         ),
@@ -107,7 +107,7 @@ public abstract class MixinLoomScreen extends ContainerScreen<LoomContainer> {
         slice = @Slice(
             from = @At(
                 value = "FIELD",
-                target = "Lnet/minecraft/client/gui/container/LoomScreen;canApplyDyePattern:Z",
+                target = "Lnet/minecraft/client/gui/screen/ingame/LoomScreen;canApplyDyePattern:Z",
                 ordinal = 1
             )
         ),
@@ -130,7 +130,7 @@ public abstract class MixinLoomScreen extends ContainerScreen<LoomContainer> {
         method = "drawBackground",
         at = @At(
             value = "FIELD",
-            target = "Lnet/minecraft/client/gui/container/LoomScreen;patternButtonTextureIds:[Lnet/minecraft/util/Identifier;",
+            target = "Lnet/minecraft/client/gui/screen/ingame/LoomScreen;patternButtonTextureIds:[Lnet/minecraft/util/Identifier;",
             args = "array=get"
         )
     )
