@@ -25,15 +25,9 @@
   "mixins": [
     "bannerpp.mixins.json"
   ],
-  "custom": {
-    "mm:early_risers": [
-        "io.github.kvverti.bannerpp.NewBannerPatterns"
-    ]
-  },
-  "requires": {
-    "fabricloader": ">=0.4.0",
-    "fabric": "*",
-    "mm": ">=1.4"
+  "depends": {
+    "fabricloader": ">=0.6.0",
+    "fabric": "*"
   },
   "suggests": {
     "flamingo": "*"

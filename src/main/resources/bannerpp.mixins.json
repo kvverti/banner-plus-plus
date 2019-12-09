@@ -3,11 +3,10 @@
   "package": "io.github.kvverti.bannerpp.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinBannerPattern",
-    "MixinLoomContainer"
+    "BannerBlockEntityMixin"
   ],
   "client": [
-    "client.MixinLoomScreen"
+    "client.BannerBlockEntityClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1
