@@ -58,7 +58,9 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
     @Inject(method = "toTag", at = @At("RETURN"))
     private void addBppPatternData(CallbackInfoReturnable<CompoundTag> info) {
         CompoundTag tag = info.getReturnValue();
-        tag.put(LoomPatternContainer.NBT_KEY, loomPatternsTag);
+        if(tag != null) {
+            tag.put(LoomPatternContainer.NBT_KEY, loomPatternsTag);
+        }
     }
 
     /**

@@ -60,6 +60,8 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
         CompoundTag tag = stack.getSubTag("BlockEntityTag");
         if(tag != null && tag.contains(NBT_KEY, 9)) {
             ((Internal)this).bannerpp_setLoomPatternTag(tag.getList(NBT_KEY, 10));
+        } else {
+            ((Internal)this).bannerpp_setLoomPatternTag(null);
         }
     }
 
@@ -69,8 +71,11 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
     @Inject(method = "getPickStack", at = @At("RETURN"))
     private void putBppPatternsInPickStack(CallbackInfoReturnable<ItemStack> info) {
         ItemStack stack = info.getReturnValue();
-        stack.getOrCreateSubTag("BlockEntityTag")
-            .put(NBT_KEY, ((Internal)this).bannerpp_getLoomPatternTag());
+        ListTag tag = ((Internal)this).bannerpp_getLoomPatternTag();
+        if(tag != null) {
+            stack.getOrCreateSubTag("BlockEntityTag")
+                .put(NBT_KEY, tag);
+        }
     }
 
     /**
@@ -146,14 +151,17 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
     @Unique
     private void readLoomPatternTag() {
         loomPatterns.clear();
-        for(Tag t : ((LoomPatternContainer.Internal)this).bannerpp_getLoomPatternTag()) {
-            CompoundTag patternTag = (CompoundTag)t;
-            LoomPattern pattern = Bannerpp.LOOM_PATTERN_REGISTRY.get(new Identifier(patternTag.getString("Pattern")));
-            DyeColor color = DyeColor.byId(patternTag.getInt("Color"));
-            int index = patternTag.getInt("Index");
-            loomPatterns.add(new LoomPatternData(pattern, color, index));
+        ListTag tag = ((LoomPatternContainer.Internal)this).bannerpp_getLoomPatternTag();
+        if(tag != null) {
+            for(Tag t : tag) {
+                CompoundTag patternTag = (CompoundTag)t;
+                LoomPattern pattern = Bannerpp.LOOM_PATTERN_REGISTRY.get(new Identifier(patternTag.getString("Pattern")));
+                DyeColor color = DyeColor.byId(patternTag.getInt("Color"));
+                int index = patternTag.getInt("Index");
+                loomPatterns.add(new LoomPatternData(pattern, color, index));
+            }
+            // the Java API requires that this sort be stable
+            loomPatterns.sort(comparingInt(d -> d.index));
         }
-        // the Java API requires that this sort be stable
-        loomPatterns.sort(comparingInt(d -> d.index));
     }
 }

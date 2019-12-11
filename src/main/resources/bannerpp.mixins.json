@@ -3,7 +3,8 @@
   "package": "io.github.kvverti.bannerpp.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "BannerBlockEntityMixin"
+    "BannerBlockEntityMixin",
+    "BannerItemMixin"
   ],
   "client": [
     "client.BannerBlockEntityClientMixin"
