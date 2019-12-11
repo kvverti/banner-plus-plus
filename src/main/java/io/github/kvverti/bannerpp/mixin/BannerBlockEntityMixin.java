@@ -46,8 +46,8 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
     @Inject(method = "getPatternCount", at = @At("RETURN"), cancellable = true)
     private static void modifyPatternCount(ItemStack stack, CallbackInfoReturnable<Integer> info) {
         CompoundTag beTag = stack.getSubTag("BlockEntityTag");
-        if(beTag.contains("Bannerpp_LoomPatterns")) {
-            int count = beTag.getList("Bannerpp_LoomPatterns", 10).size();
+        if(beTag.contains(LoomPatternContainer.NBT_KEY)) {
+            int count = beTag.getList(LoomPatternContainer.NBT_KEY, 10).size();
             info.setReturnValue(info.getReturnValueI() + count);
         }
     }
@@ -58,7 +58,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
     @Inject(method = "toTag", at = @At("RETURN"))
     private void addBppPatternData(CallbackInfoReturnable<CompoundTag> info) {
         CompoundTag tag = info.getReturnValue();
-        tag.put("Bannerpp_LoomPatterns", loomPatternsTag);
+        tag.put(LoomPatternContainer.NBT_KEY, loomPatternsTag);
     }
 
     /**
@@ -66,6 +66,6 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
      */
     @Inject(method = "fromTag", at = @At("RETURN"))
     private void readBppPatternData(CompoundTag tag, CallbackInfo info) {
-        loomPatternsTag = tag.getList("Bannerpp_LoomPatterns", 10);
+        loomPatternsTag = tag.getList(LoomPatternContainer.NBT_KEY, 10);
     }
 }

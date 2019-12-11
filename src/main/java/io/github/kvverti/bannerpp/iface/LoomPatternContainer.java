@@ -8,6 +8,8 @@ import net.minecraft.nbt.ListTag;
 
 public interface LoomPatternContainer {
 
+    String NBT_KEY = "Bannerpp_LoomPatterns";
+
     List<LoomPatternData> bannerpp_getLoomPatterns();
 
     /**

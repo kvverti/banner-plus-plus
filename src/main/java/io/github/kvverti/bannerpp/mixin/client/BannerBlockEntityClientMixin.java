@@ -58,8 +58,8 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
     @Inject(method = "readFrom", at = @At("RETURN"))
     private void bppReadPatternFromItemStack(ItemStack stack, DyeColor color, CallbackInfo info) {
         CompoundTag tag = stack.getSubTag("BlockEntityTag");
-        if(tag != null && tag.contains("Bannerpp_LoomPatterns", 9)) {
-            ((LoomPatternContainer.Internal)this).bannerpp_setLoomPatternTag(tag.getList("Bannerpp_LoomPatterns", 10));
+        if(tag != null && tag.contains(NBT_KEY, 9)) {
+            ((Internal)this).bannerpp_setLoomPatternTag(tag.getList(NBT_KEY, 10));
         }
     }
 
@@ -70,7 +70,7 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
     private void putBppPatternsInPickStack(CallbackInfoReturnable<ItemStack> info) {
         ItemStack stack = info.getReturnValue();
         stack.getOrCreateSubTag("BlockEntityTag")
-            .put("Bannerpp_LoomPatterns", ((LoomPatternContainer.Internal)this).bannerpp_getLoomPatternTag());
+            .put(NBT_KEY, ((Internal)this).bannerpp_getLoomPatternTag());
     }
 
     /**
