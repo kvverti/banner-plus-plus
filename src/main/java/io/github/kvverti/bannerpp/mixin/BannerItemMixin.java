@@ -61,13 +61,15 @@ public abstract class BannerItemMixin extends WallStandingBlockItem {
     )
     private static void appendBppLoomPatternsInline(ItemStack stack, List<Text> lines, CallbackInfo info) {
         int nextIndex = lines.size() - 1;
-        while(nextLoomPatternIndex < loomPatterns.size()) {
-            CompoundTag data = loomPatterns.getCompound(nextLoomPatternIndex);
-            if(data.getInt("Index") == nextIndex) {
-                addLoomPatternLine(data, lines);
-                nextLoomPatternIndex++;
-            } else {
-                break;
+        if(loomPatterns != null) {
+            while(nextLoomPatternIndex < loomPatterns.size()) {
+                CompoundTag data = loomPatterns.getCompound(nextLoomPatternIndex);
+                if(data.getInt("Index") == nextIndex) {
+                    addLoomPatternLine(data, lines);
+                    nextLoomPatternIndex++;
+                } else {
+                    break;
+                }
             }
         }
     }

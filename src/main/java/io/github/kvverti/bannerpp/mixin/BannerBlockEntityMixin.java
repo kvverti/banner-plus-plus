@@ -21,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static java.util.Comparator.comparingInt;
+
 /**
  * Adds loom pattern data fields to the banner block entity.
  * The actual pattern parsing is done client side in the banner's
@@ -59,6 +61,42 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
     }
 
     /**
+     * Handles removing Banner++ loom patterns instead of vanilla loom patterns
+     * when a banner is cleaned in a cauldron. Yes, this is an "inject-and-cancel"
+     * callback. Let me know if there are incompatibilities.
+     */
+    @Inject(method = "loadFromItemStack", at = @At("HEAD"), cancellable = true)
+    private static void cleanBppLoomPattern(ItemStack stack, CallbackInfo info) {
+        CompoundTag beTag = stack.getSubTag("BlockEntityTag");
+        if(beTag != null) {
+            ListTag loomPatterns = beTag.getList(LoomPatternContainer.NBT_KEY, 10);
+            ListTag patterns = beTag.getList("Patterns", 10);
+            boolean cleaned = false;
+            if(!loomPatterns.isEmpty()) {
+                // determine if the last loom pattern is the topmost
+                int lastIndex = loomPatterns.getCompound(loomPatterns.size() - 1).getInt("Index");
+                if(lastIndex >= patterns.size()) {
+                    loomPatterns.remove(loomPatterns.size() - 1);
+                    cleaned = true;
+                }
+            }
+            if(!cleaned && !patterns.isEmpty()) {
+                patterns.remove(patterns.size() - 1);
+            }
+            if(loomPatterns.isEmpty()) {
+                if(patterns.isEmpty()) {
+                    stack.removeSubTag("BlockEntityTag");
+                } else {
+                    beTag.remove(LoomPatternContainer.NBT_KEY);
+                }
+            } else if(patterns.isEmpty()) {
+                beTag.remove("Patterns");
+            }
+        }
+        info.cancel();
+    }
+
+    /**
      * Write Banner++ data to tag.
      */
     @Inject(method = "toTag", at = @At("RETURN"))
@@ -93,5 +131,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
                 }
             }
         }
+        // the Java API requires that this sort be stable
+        loomPatternsTag.sort(comparingInt(t -> ((CompoundTag)t).getInt("Index")));
     }
 }

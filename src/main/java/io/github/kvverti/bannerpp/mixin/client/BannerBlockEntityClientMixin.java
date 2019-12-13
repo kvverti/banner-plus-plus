@@ -28,8 +28,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static java.util.Comparator.comparingInt;
-
 @Mixin(BannerBlockEntity.class)
 public abstract class BannerBlockEntityClientMixin extends BlockEntity implements LoomPatternContainer {
 
@@ -159,8 +157,6 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
                 int index = patternTag.getInt("Index");
                 loomPatterns.add(new LoomPatternData(pattern, color, index));
             }
-            // the Java API requires that this sort be stable
-            loomPatterns.sort(comparingInt(d -> d.index));
         }
     }
 }
