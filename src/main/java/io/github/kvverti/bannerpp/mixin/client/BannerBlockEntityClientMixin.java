@@ -129,7 +129,6 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
         for(int i = nextLoomPatternIndex; i < loomPatterns.size(); i++) {
             this.patternCacheKey += partialCacheKey(loomPatterns.get(i));
         }
-        System.out.println(this.patternCacheKey);
     }
 
     private String partialCacheKey(LoomPatternData data) {

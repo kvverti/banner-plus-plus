@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(BannerBlockEntityRenderer.class)
 public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer<BannerBlockEntity> {
@@ -44,7 +45,7 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
      */
     @Inject(method = "method_23802", at = @At("HEAD"))
     private static void preBppPatternRender(BannerBlockEntity banner, MatrixStack stack,
-            VertexConsumerProvider provider, int haha, int no, ModelPart part, boolean lol, CallbackInfo info) {
+            VertexConsumerProvider provider, int haha, int no, ModelPart part, SpriteIdentifier spriteId, boolean notShield, CallbackInfo info) {
         nextLoomPatternIndex = 0;
         loomPatterns = ((LoomPatternContainer)banner).bannerpp_getLoomPatterns();
     }
@@ -59,14 +60,15 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
             target = "Ljava/util/List;get(I)Ljava/lang/Object;",
             ordinal = 0,
             remap = false
-        )
+        ),
+        locals = LocalCapture.CAPTURE_FAILHARD
     )
     private static void bppPatternRenderInline(BannerBlockEntity banner, MatrixStack stack,
-            VertexConsumerProvider provider, int haha, int no, ModelPart part, boolean notShield, CallbackInfo info,
+            VertexConsumerProvider provider, int haha, int no, ModelPart part, SpriteIdentifier spriteId, boolean notShield, CallbackInfo info,
             List<BannerPattern> ls1, List<DyeColor> ls2, int idx) {
         while(nextLoomPatternIndex < loomPatterns.size()) {
             LoomPatternData data = loomPatterns.get(nextLoomPatternIndex);
-            if(data.index == idx) {
+            if(data.index == idx - 1) {
                 renderBppLoomPattern(data, stack, provider, part, haha, no, notShield);
                 nextLoomPatternIndex++;
             } else {
@@ -80,7 +82,7 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
      */
     @Inject(method = "method_23802", at = @At("RETURN"))
     private static void bppPatternRenderPost(BannerBlockEntity banner, MatrixStack stack,
-            VertexConsumerProvider provider, int haha, int no, ModelPart part, boolean notShield, CallbackInfo info) {
+            VertexConsumerProvider provider, int haha, int no, ModelPart part, SpriteIdentifier spriteId, boolean notShield, CallbackInfo info) {
         for(int i = nextLoomPatternIndex; i < loomPatterns.size(); i++) {
             renderBppLoomPattern(loomPatterns.get(i), stack, provider, part, haha, no, notShield);
         }

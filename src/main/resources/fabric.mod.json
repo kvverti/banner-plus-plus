@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "io.github.kvverti.bannerpp.Bannerpp"
+    ],
+    "client": [
+      "io.github.kvverti.bannerpp.BannerppClient"
     ]
   },
   "mixins": [
