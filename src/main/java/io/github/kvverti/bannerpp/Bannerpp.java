@@ -45,8 +45,8 @@ public class Bannerpp implements ModInitializer {
         registerPattern("lower_middle_fifth_stripe");
         registerPattern("bottom_fifth_stripe");
         registerPattern("right_quarter_stripe");
-        registerPattern("center_right_quarter_stripe");
-        registerPattern("center_left_quarter_stripe");
+        registerPattern("right_center_quarter_stripe");
+        registerPattern("left_center_quarter_stripe");
         registerPattern("left_quarter_stripe");
         registerPattern("top_quarter_stripe");
         registerPattern("upper_middle_quarter_stripe");

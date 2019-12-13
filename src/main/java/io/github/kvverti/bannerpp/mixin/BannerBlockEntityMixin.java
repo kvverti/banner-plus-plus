@@ -1,12 +1,18 @@
 package io.github.kvverti.bannerpp.mixin;
 
+import io.github.kvverti.bannerpp.Bannerpp;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
+
+import java.util.Iterator;
 
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -69,5 +75,23 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
     @Inject(method = "fromTag", at = @At("RETURN"))
     private void readBppPatternData(CompoundTag tag, CallbackInfo info) {
         loomPatternsTag = tag.getList(LoomPatternContainer.NBT_KEY, 10);
+        // validate NBT data, removing and/or resetting invalid data
+        for(Iterator<Tag> itr = loomPatternsTag.iterator(); itr.hasNext(); ) {
+            CompoundTag element = (CompoundTag)itr.next();
+            Identifier id = Identifier.tryParse(element.getString("Pattern"));
+            int colorId = element.getInt("Color");
+            int index = element.getInt("Index");
+            if(id == null || !Bannerpp.LOOM_PATTERN_REGISTRY.containsId(id)) {
+                itr.remove();
+            } else {
+                int rtColorId = DyeColor.byId(colorId).getId();
+                if(rtColorId != colorId) {
+                    element.putInt("Color", rtColorId);
+                }
+                if(index < 0) {
+                    element.putInt("Index", 0);
+                }
+            }
+        }
     }
 }
