@@ -14,6 +14,11 @@ public class BannerppClient implements ClientModInitializer {
             .register((texture, registry) -> {
                 for(Identifier id : Bannerpp.LOOM_PATTERN_REGISTRY.getIds()) {
                     registry.register(LoomPattern.getSpriteId(id, "banner"));
+                }
+            });
+        ClientSpriteRegistryCallback.event(TexturedRenderLayers.SHIELD_PATTERNS_ATLAS_TEXTURE)
+            .register((texture, registry) -> {
+                for(Identifier id : Bannerpp.LOOM_PATTERN_REGISTRY.getIds()) {
                     registry.register(LoomPattern.getSpriteId(id, "shield"));
                 }
             });
