@@ -54,7 +54,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
     @Inject(method = "getPatternCount", at = @At("RETURN"), cancellable = true)
     private static void modifyPatternCount(ItemStack stack, CallbackInfoReturnable<Integer> info) {
         CompoundTag beTag = stack.getSubTag("BlockEntityTag");
-        if(beTag.contains(LoomPatternContainer.NBT_KEY)) {
+        if(beTag != null && beTag.contains(LoomPatternContainer.NBT_KEY)) {
             int count = beTag.getList(LoomPatternContainer.NBT_KEY, 10).size();
             info.setReturnValue(info.getReturnValueI() + count);
         }

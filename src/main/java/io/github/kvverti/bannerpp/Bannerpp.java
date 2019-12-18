@@ -1,6 +1,7 @@
 package io.github.kvverti.bannerpp;
 
-import io.github.kvverti.bannerpp.LoomPattern;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.fabricmc.api.ModInitializer;
 
@@ -14,7 +15,9 @@ import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class Bannerpp implements ModInitializer {
+import static java.util.Comparator.comparing;
+
+public final class Bannerpp implements ModInitializer {
 
     @SuppressWarnings("unused")
     private static final Logger log = LogManager.getLogger(Bannerpp.class);
@@ -28,6 +31,23 @@ public class Bannerpp implements ModInitializer {
 
     // LoomPattern registry
     public static final MutableRegistry<LoomPattern> LOOM_PATTERN_REGISTRY = new SimpleRegistry<>();
+
+    private static final List<LoomPattern> nonSpecialPatterns = new ArrayList<>();
+
+    public static int getLoomIndex(LoomPattern pattern) {
+        if(pattern.isSpecial()) {
+            throw new IllegalArgumentException("Tried to obtain index of special pattern");
+        }
+        return nonSpecialPatterns.indexOf(pattern);
+    }
+
+    public static LoomPattern byLoomIndex(int loomIndex) {
+        return nonSpecialPatterns.get(loomIndex);
+    }
+
+    public static int dyeLoomPatternCount() {
+        return nonSpecialPatterns.size();
+    }
 
     @Override
     public void onInitialize() {
@@ -54,6 +74,18 @@ public class Bannerpp implements ModInitializer {
         registerPattern("bottom_quarter_stripe");
         registerPattern("pig", PIG_BANNER_PATTERN);
         registerPattern("bee", BEE_BANNER_PATTERN);
+
+        // todo entrypoint hook
+
+        for(LoomPattern p : LOOM_PATTERN_REGISTRY) {
+            if(!p.isSpecial()) {
+                nonSpecialPatterns.add(p);
+            }
+        }
+        // sort the dye loom patterns by mod ID.
+        // this provides a consistent ordering of loom patterns,
+        // even in nondeterministic mod initialization order.
+        nonSpecialPatterns.sort(comparing(p -> LOOM_PATTERN_REGISTRY.getId(p).getNamespace()));
 
         registerItem("pig_banner_pattern", PIG_BANNER_PATTERN);
     }

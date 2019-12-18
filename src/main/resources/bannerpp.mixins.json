@@ -4,11 +4,13 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "BannerBlockEntityMixin",
-    "BannerItemMixin"
+    "BannerItemMixin",
+    "LoomContainerMixin"
   ],
   "client": [
     "client.BannerBlockEntityClientMixin",
-    "client.BannerBlockEntityRendererMixin"
+    "client.BannerBlockEntityRendererMixin",
+    "client.LoomScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
