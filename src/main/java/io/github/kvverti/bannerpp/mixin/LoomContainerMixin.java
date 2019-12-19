@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -53,6 +54,26 @@ public abstract class LoomContainerMixin extends Container {
         }
     }
 
+    /**
+     * Trigger the then branch if the selected pattern is a Banner++ loom pattern.
+     * We make the condition `selectedPattern.get() < BannerPattern.COUNT - 5`
+     * true in this case.
+     */
+    @Redirect(
+        method = "onContentChanged",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/container/Property;get()I"
+        )
+    )
+    private int addBppLoomPatternCondition(Property self) {
+        int res = self.get();
+        if(res < 0) {
+            res = 1;
+        }
+        return res;
+    }
+
     // private void updateBppContentChanged(CallbackInfo info) {
     //    ItemStack banner = this.bannerSlot.getStack();
     //    ItemStack dyeStack = this.dyeSlot.getStack();
@@ -78,12 +99,14 @@ public abstract class LoomContainerMixin extends Container {
      */
     @Inject(method = "updateOutputSlot", at = @At("HEAD"))
     private void addBppLoomPatternToOutput(CallbackInfo info) {
-        if(this.selectedPattern.get() < 0) {
+        ItemStack bannerStack = this.bannerSlot.getStack();
+        ItemStack dyeStack = this.dyeSlot.getStack();
+        if(this.selectedPattern.get() < 0 && !bannerStack.isEmpty() && !dyeStack.isEmpty()) {
             int rawId = -this.selectedPattern.get() - (1 + BannerPattern.LOOM_APPLICABLE_COUNT);
             if(rawId < Bannerpp.dyeLoomPatternCount()) {
                 LoomPattern pattern = Bannerpp.byLoomIndex(rawId);
-                DyeColor color = ((DyeItem)this.dyeSlot.getStack().getItem()).getColor();
-                ItemStack output = this.bannerSlot.getStack().copy();
+                DyeColor color = ((DyeItem)dyeStack.getItem()).getColor();
+                ItemStack output = bannerStack.copy();
                 output.setCount(1);
                 CompoundTag beTag = output.getOrCreateSubTag("BlockEntityTag");
                 ListTag loomPatterns;
