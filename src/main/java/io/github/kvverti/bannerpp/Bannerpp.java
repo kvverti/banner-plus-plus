@@ -1,5 +1,8 @@
 package io.github.kvverti.bannerpp;
 
+import io.github.kvverti.bannerpp.api.LoomPattern;
+import io.github.kvverti.bannerpp.api.LoomPatternItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +18,6 @@ import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static java.util.Comparator.comparing;
-
 public final class Bannerpp implements ModInitializer {
 
     @SuppressWarnings("unused")
@@ -24,10 +25,6 @@ public final class Bannerpp implements ModInitializer {
 
     // metadata
     public static final String MODID = "bannerpp";
-
-    // custom items
-    public static final Item PIG_BANNER_PATTERN = new Item(new Item.Settings().maxCount(1).group(ItemGroup.MISC));
-    public static final Item BEE_BANNER_PATTERN = new Item(new Item.Settings().maxCount(1).group(ItemGroup.MISC));
 
     // LoomPattern registry
     public static final MutableRegistry<LoomPattern> LOOM_PATTERN_REGISTRY = new SimpleRegistry<>();
@@ -72,33 +69,28 @@ public final class Bannerpp implements ModInitializer {
         registerPattern("upper_middle_quarter_stripe");
         registerPattern("lower_middle_quarter_stripe");
         registerPattern("bottom_quarter_stripe");
-        registerPattern("pig", PIG_BANNER_PATTERN);
-        registerPattern("bee", BEE_BANNER_PATTERN);
-
-        // todo entrypoint hook
+        registerPattern("pig", true);
+        registerPattern("bee", true);
 
         for(LoomPattern p : LOOM_PATTERN_REGISTRY) {
             if(!p.isSpecial()) {
                 nonSpecialPatterns.add(p);
             }
         }
-        // sort the dye loom patterns by mod ID.
-        // this provides a consistent ordering of loom patterns,
-        // even in nondeterministic mod initialization order.
-        nonSpecialPatterns.sort(comparing(p -> LOOM_PATTERN_REGISTRY.getId(p).getNamespace()));
-
-        registerItem("pig_banner_pattern", PIG_BANNER_PATTERN);
     }
 
     private void registerPattern(String name) {
-        Registry.register(LOOM_PATTERN_REGISTRY, new Identifier(MODID, name), new LoomPattern());
+        registerPattern(name, false);
     }
 
-    private void registerPattern(String name, Item item) {
-        Registry.register(LOOM_PATTERN_REGISTRY, new Identifier(MODID, name), new LoomPattern(item));
-    }
+    // custom item settings
+    private static final Item.Settings itemSettings = new Item.Settings().maxCount(1).group(ItemGroup.MISC);
 
-    private void registerItem(String name, Item item) {
-        Registry.register(Registry.ITEM, new Identifier(MODID, name), item);
+    private void registerPattern(String name, boolean special) {
+        LoomPattern pattern = new LoomPattern(special);
+        Registry.register(LOOM_PATTERN_REGISTRY, new Identifier(MODID, name), pattern);
+        if(special) {
+            Registry.register(Registry.ITEM, new Identifier(MODID, name + "_banner_pattern"), new LoomPatternItem(pattern, itemSettings));
+        }
     }
 }

@@ -1,8 +1,6 @@
-package io.github.kvverti.bannerpp;
+package io.github.kvverti.bannerpp.api;
 
 import net.minecraft.util.Identifier;
-import net.minecraft.item.Items;
-import net.minecraft.item.Item;
 
 /**
  * An extensible version of BannerPattern. Instances are referenced
@@ -10,21 +8,21 @@ import net.minecraft.item.Item;
  */
 public class LoomPattern {
 
-    private final Item specialItem;
+    private final boolean special;
 
-    public LoomPattern(Item item) {
-        this.specialItem = item;
+    public LoomPattern(boolean special) {
+        this.special = true;
     }
 
     public LoomPattern() {
-        this(Items.AIR);
+        this(false);
     }
 
     /**
      * Whether this loom pattern requres an item in the pattern slot.
      */
     public boolean isSpecial() {
-        return specialItem != Items.AIR;
+        return special;
     }
 
     /**

@@ -1,5 +1,7 @@
 package io.github.kvverti.bannerpp;
 
+import io.github.kvverti.bannerpp.api.LoomPattern;
+
 import net.minecraft.util.DyeColor;
 
 /**

@@ -1,5 +1,7 @@
 package io.github.kvverti.bannerpp;
 
+import io.github.kvverti.bannerpp.api.LoomPattern;
+
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 

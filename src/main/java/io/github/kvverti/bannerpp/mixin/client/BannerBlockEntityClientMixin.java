@@ -1,10 +1,8 @@
 package io.github.kvverti.bannerpp.mixin.client;
 
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import net.minecraft.item.ItemStack;
-import io.github.kvverti.bannerpp.LoomPattern;
 import io.github.kvverti.bannerpp.Bannerpp;
 import io.github.kvverti.bannerpp.LoomPatternData;
+import io.github.kvverti.bannerpp.api.LoomPattern;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
 
 import java.util.ArrayList;
@@ -14,6 +12,7 @@ import java.util.List;
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -27,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BannerBlockEntity.class)
 public abstract class BannerBlockEntityClientMixin extends BlockEntity implements LoomPatternContainer {
