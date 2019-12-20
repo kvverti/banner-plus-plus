@@ -30,20 +30,30 @@ public final class Bannerpp implements ModInitializer {
     public static final MutableRegistry<LoomPattern> LOOM_PATTERN_REGISTRY = new SimpleRegistry<>();
 
     private static final List<LoomPattern> nonSpecialPatterns = new ArrayList<>();
+    private static final List<LoomPattern> specialPatterns = new ArrayList<>();
 
     public static int getLoomIndex(LoomPattern pattern) {
         if(pattern.isSpecial()) {
-            throw new IllegalArgumentException("Tried to obtain index of special pattern");
+            return specialPatterns.indexOf(pattern) + nonSpecialPatterns.size();
+        } else {
+            return nonSpecialPatterns.indexOf(pattern);
         }
-        return nonSpecialPatterns.indexOf(pattern);
     }
 
     public static LoomPattern byLoomIndex(int loomIndex) {
-        return nonSpecialPatterns.get(loomIndex);
+        if(loomIndex < nonSpecialPatterns.size()) {
+            return nonSpecialPatterns.get(loomIndex);
+        } else {
+            return specialPatterns.get(loomIndex - nonSpecialPatterns.size());
+        }
     }
 
     public static int dyeLoomPatternCount() {
         return nonSpecialPatterns.size();
+    }
+
+    public static int totalLoomPatternCount() {
+        return nonSpecialPatterns.size() + specialPatterns.size();
     }
 
     @Override
@@ -75,6 +85,8 @@ public final class Bannerpp implements ModInitializer {
         for(LoomPattern p : LOOM_PATTERN_REGISTRY) {
             if(!p.isSpecial()) {
                 nonSpecialPatterns.add(p);
+            } else {
+                specialPatterns.add(p);
             }
         }
     }

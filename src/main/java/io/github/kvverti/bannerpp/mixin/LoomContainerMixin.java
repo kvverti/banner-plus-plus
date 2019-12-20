@@ -2,8 +2,10 @@ package io.github.kvverti.bannerpp.mixin;
 
 import io.github.kvverti.bannerpp.Bannerpp;
 import io.github.kvverti.bannerpp.api.LoomPattern;
+import io.github.kvverti.bannerpp.api.LoomPatternItem;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
 
+import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.container.Container;
 import net.minecraft.container.LoomContainer;
@@ -47,7 +49,8 @@ public abstract class LoomContainerMixin extends Container {
      */
     @Inject(method = "onButtonClick", at = @At("HEAD"), cancellable = true)
     private void selectBppLoomPatternOnClick(PlayerEntity entity, int clicked, CallbackInfoReturnable<Boolean> info) {
-        if(clicked > BannerPattern.LOOM_APPLICABLE_COUNT) {
+        int vanillaCount = BannerPattern.LOOM_APPLICABLE_COUNT;
+        if(clicked > vanillaCount && clicked - (1 + vanillaCount) < Bannerpp.dyeLoomPatternCount()) {
             selectedPattern.set(-clicked);
             this.updateOutputSlot();
             info.setReturnValue(true);
@@ -74,24 +77,45 @@ public abstract class LoomContainerMixin extends Container {
         return res;
     }
 
-    // private void updateBppContentChanged(CallbackInfo info) {
-    //    ItemStack banner = this.bannerSlot.getStack();
-    //    ItemStack dyeStack = this.dyeSlot.getStack();
-    //    ItemStack pattern = this.patternSlot.getStack();
-    //    ItemStack output = this.outputSlot.getStack();
-    //    if (output.isEmpty() || (!banner.isEmpty() && !dyeStack.isEmpty()) && (this.selectedPattern.get() < 0 || !pattern.isEmpty())) {
-    //       if (!pattern.isEmpty() && pattern.getItem() instanceof ...) {
-    //          CompoundTag beTag = banner.getOrCreateSubTag("BlockEntityTag");
-    //          boolean overfull = BannerBlockEntity.getPatternCount(banner) >= 6;
-    //          if (!overfull) {
-    //             this.selectedPattern.set(...);
-    //             this.updateOutputSlot();
-    //             this.sendContentUpdates();
-    //             info.cancel();
-    //          }
-    //       }
-    //    }
-    // }
+    /**
+     * Set the loom pattern when a loom pattern item is placed in the loom.
+     * This injection is at the beginning of the then block after the check
+     * for a loom state that should display an item.
+     * Relevant bytecode:
+     *   110: aload         4
+     *   <injection point>
+     *   112: invokevirtual #182                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+     *   115: ifne          217
+     *   118: aload         4
+     *   120: invokevirtual #196                // Method net/minecraft/item/ItemStack.getItem:()Lnet/minecraft/item/Item;
+     *   123: instanceof    #198                // class net/minecraft/item/BannerPatternItem
+     */
+    @Inject(
+        method = "onContentChanged",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/item/ItemStack;isEmpty()Z",
+            ordinal = 4
+        )
+    )
+    private void updateBppContentChanged(CallbackInfo info) {
+        ItemStack banner = this.bannerSlot.getStack();
+        ItemStack patternStack = this.patternSlot.getStack();
+        // only run for special loom patterns
+        if(!patternStack.isEmpty() && patternStack.getItem() instanceof LoomPatternItem) {
+            boolean overfull = BannerBlockEntity.getPatternCount(banner) >= 6;
+            if(!overfull) {
+                LoomPattern pattern = ((LoomPatternItem)patternStack.getItem()).getPattern();
+                this.selectedPattern.set(-Bannerpp.getLoomIndex(pattern) - (1 + BannerPattern.LOOM_APPLICABLE_COUNT));
+            } else {
+                this.selectedPattern.set(0);
+            }
+        } else if(-this.selectedPattern.get() - (1 + BannerPattern.LOOM_APPLICABLE_COUNT) >= Bannerpp.dyeLoomPatternCount()) {
+            // reset special loom pattern on removal
+            this.selectedPattern.set(0);
+            this.outputSlot.setStack(ItemStack.EMPTY);
+        }
+    }
 
     /**
      * When the output slot is updated, add the loom pattern to the
@@ -103,7 +127,7 @@ public abstract class LoomContainerMixin extends Container {
         ItemStack dyeStack = this.dyeSlot.getStack();
         if(this.selectedPattern.get() < 0 && !bannerStack.isEmpty() && !dyeStack.isEmpty()) {
             int rawId = -this.selectedPattern.get() - (1 + BannerPattern.LOOM_APPLICABLE_COUNT);
-            if(rawId < Bannerpp.dyeLoomPatternCount()) {
+            if(rawId < Bannerpp.totalLoomPatternCount()) {
                 LoomPattern pattern = Bannerpp.byLoomIndex(rawId);
                 DyeColor color = ((DyeItem)dyeStack.getItem()).getColor();
                 ItemStack output = bannerStack.copy();
@@ -125,6 +149,39 @@ public abstract class LoomContainerMixin extends Container {
                 if(!ItemStack.areEqualIgnoreDamage(output, this.outputSlot.getStack())) {
                     this.outputSlot.setStack(output);
                 }
+            }
+        }
+    }
+
+    /**
+     * Attempts transfer of a loom pattern item into the loom's pattern slot.
+     * (The vanilla code only attempts this on vanilla banner pattern items)
+     * The injection point targets the first instruction in the if-else ladder.
+     * Relevant bytecode:
+     *   130: getstatic     #188                // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+     *   133: areturn
+     *   --- basic block boundary ---
+     *   <injection point>
+     *   134: aload         5
+     *   136: invokevirtual #196                // Method net/minecraft/item/ItemStack.getItem:()Lnet/minecraft/item/Item;
+     *   139: instanceof    #275                // class net/minecraft/item/BannerItem
+     *   142: ifeq          175
+     */
+    @Inject(
+        method = "transferSlot",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;",
+            ordinal = 0,
+            shift = At.Shift.BEFORE
+        ),
+        cancellable = true
+    )
+    private void attemptBppPatternItemTransfer(PlayerEntity player, int slotIdx, CallbackInfoReturnable<ItemStack> info) {
+        ItemStack stack = this.slotList.get(slotIdx).getStack();
+        if(stack.getItem() instanceof LoomPatternItem) {
+            if(!this.insertItem(stack, this.patternSlot.id, this.patternSlot.id + 1, false)) {
+                info.setReturnValue(ItemStack.EMPTY);
             }
         }
     }

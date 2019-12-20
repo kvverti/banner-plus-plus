@@ -11,7 +11,7 @@ public class LoomPattern {
     private final boolean special;
 
     public LoomPattern(boolean special) {
-        this.special = true;
+        this.special = special;
     }
 
     public LoomPattern() {

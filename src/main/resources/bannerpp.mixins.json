@@ -5,7 +5,8 @@
   "mixins": [
     "BannerBlockEntityMixin",
     "BannerItemMixin",
-    "LoomContainerMixin"
+    "LoomContainerMixin",
+    "LoomContainerPatternSlotMixin"
   ],
   "client": [
     "client.BannerBlockEntityClientMixin",
