@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.registry.RegistryIdRemapCallback;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -31,6 +32,24 @@ public final class Bannerpp implements ModInitializer {
 
     private static final List<LoomPattern> nonSpecialPatterns = new ArrayList<>();
     private static final List<LoomPattern> specialPatterns = new ArrayList<>();
+
+    /**
+     * Called every time the registries are synced to rebuild the loom
+     * index table. Loom pattern indices are based on the order in which
+     * loom patterns appear in the registry, not on the raw IDs themselves,
+     * hence why we don't use the remap context.
+     */
+    private static void remapLoomIndices() {
+        nonSpecialPatterns.clear();
+        specialPatterns.clear();
+        for(LoomPattern p : LOOM_PATTERN_REGISTRY) {
+            if(!p.isSpecial()) {
+                nonSpecialPatterns.add(p);
+            } else {
+                specialPatterns.add(p);
+            }
+        }
+    }
 
     public static int getLoomIndex(LoomPattern pattern) {
         if(pattern.isSpecial()) {
@@ -82,13 +101,7 @@ public final class Bannerpp implements ModInitializer {
         registerPattern("pig", true);
         registerPattern("bee", true);
 
-        for(LoomPattern p : LOOM_PATTERN_REGISTRY) {
-            if(!p.isSpecial()) {
-                nonSpecialPatterns.add(p);
-            } else {
-                specialPatterns.add(p);
-            }
-        }
+        RegistryIdRemapCallback.event(LOOM_PATTERN_REGISTRY).register(state -> remapLoomIndices());
     }
 
     private void registerPattern(String name) {
