@@ -10,7 +10,8 @@
   ],
   "contact": {
     "homepage": "https://github.com/kvverti/banner-plus-plus",
-    "sources": "https://github.com/kvverti/banner-plus-plus"
+    "sources": "https://github.com/kvverti/banner-plus-plus",
+    "issues": "https://github.com/kvverti/banner-plus-plus/issues"
   },
 
   "license": "MIT",
@@ -29,7 +30,7 @@
     "bannerpp.mixins.json"
   ],
   "custom": {
-    "modmenu:api": true  
+    "modmenu:api": true
   },
   "depends": {
     "fabricloader": ">=0.6.0",
