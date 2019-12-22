@@ -1,7 +1,7 @@
 package io.github.kvverti.bannerpp.mixin;
 
-import io.github.kvverti.bannerpp.Bannerpp;
 import io.github.kvverti.bannerpp.api.LoomPattern;
+import io.github.kvverti.bannerpp.api.LoomPatterns;
 import io.github.kvverti.bannerpp.api.LoomPatternItem;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
 
@@ -51,7 +51,7 @@ public abstract class LoomContainerMixin extends Container {
     @Inject(method = "onButtonClick", at = @At("HEAD"), cancellable = true)
     private void selectBppLoomPatternOnClick(PlayerEntity entity, int clicked, CallbackInfoReturnable<Boolean> info) {
         int vanillaCount = BannerPattern.LOOM_APPLICABLE_COUNT;
-        if(clicked > vanillaCount && clicked - (1 + vanillaCount) < Bannerpp.dyeLoomPatternCount()) {
+        if(clicked > vanillaCount && clicked - (1 + vanillaCount) < LoomPatterns.dyeLoomPatternCount()) {
             selectedPattern.set(-clicked);
             this.updateOutputSlot();
             info.setReturnValue(true);
@@ -117,11 +117,11 @@ public abstract class LoomContainerMixin extends Container {
             boolean overfull = BannerBlockEntity.getPatternCount(banner) >= 6;
             if(!overfull) {
                 LoomPattern pattern = ((LoomPatternItem)patternStack.getItem()).getPattern();
-                this.selectedPattern.set(-Bannerpp.getLoomIndex(pattern) - (1 + BannerPattern.LOOM_APPLICABLE_COUNT));
+                this.selectedPattern.set(-LoomPatterns.getLoomIndex(pattern) - (1 + BannerPattern.LOOM_APPLICABLE_COUNT));
             } else {
                 this.selectedPattern.set(0);
             }
-        } else if(-this.selectedPattern.get() - (1 + BannerPattern.LOOM_APPLICABLE_COUNT) >= Bannerpp.dyeLoomPatternCount()) {
+        } else if(-this.selectedPattern.get() - (1 + BannerPattern.LOOM_APPLICABLE_COUNT) >= LoomPatterns.dyeLoomPatternCount()) {
             // reset special loom pattern on removal
             this.selectedPattern.set(0);
             this.outputSlot.setStack(ItemStack.EMPTY);
@@ -138,8 +138,8 @@ public abstract class LoomContainerMixin extends Container {
         ItemStack dyeStack = this.dyeSlot.getStack();
         if(this.selectedPattern.get() < 0 && !bannerStack.isEmpty() && !dyeStack.isEmpty()) {
             int rawId = -this.selectedPattern.get() - (1 + BannerPattern.LOOM_APPLICABLE_COUNT);
-            if(rawId < Bannerpp.totalLoomPatternCount()) {
-                LoomPattern pattern = Bannerpp.byLoomIndex(rawId);
+            if(rawId < LoomPatterns.totalLoomPatternCount()) {
+                LoomPattern pattern = LoomPatterns.byLoomIndex(rawId);
                 DyeColor color = ((DyeItem)dyeStack.getItem()).getColor();
                 ItemStack output = bannerStack.copy();
                 output.setCount(1);
@@ -153,7 +153,7 @@ public abstract class LoomContainerMixin extends Container {
                 }
                 int vanillaPatternCount = beTag.getList("Patterns", 10).size();
                 CompoundTag patternTag = new CompoundTag();
-                patternTag.putString("Pattern", Bannerpp.LOOM_PATTERN_REGISTRY.getId(pattern).toString());
+                patternTag.putString("Pattern", LoomPatterns.REGISTRY.getId(pattern).toString());
                 patternTag.putInt("Color", color.getId());
                 patternTag.putInt("Index", vanillaPatternCount);
                 loomPatterns.add(patternTag);

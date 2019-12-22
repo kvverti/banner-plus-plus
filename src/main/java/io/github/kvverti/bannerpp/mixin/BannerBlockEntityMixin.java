@@ -1,6 +1,6 @@
 package io.github.kvverti.bannerpp.mixin;
 
-import io.github.kvverti.bannerpp.Bannerpp;
+import io.github.kvverti.bannerpp.api.LoomPatterns;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
 
 import java.util.Iterator;
@@ -119,7 +119,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
             Identifier id = Identifier.tryParse(element.getString("Pattern"));
             int colorId = element.getInt("Color");
             int index = element.getInt("Index");
-            if(id == null || !Bannerpp.LOOM_PATTERN_REGISTRY.containsId(id)) {
+            if(id == null || !LoomPatterns.REGISTRY.containsId(id)) {
                 itr.remove();
             } else {
                 int rtColorId = DyeColor.byId(colorId).getId();

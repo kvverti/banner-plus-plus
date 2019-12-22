@@ -1,8 +1,8 @@
 package io.github.kvverti.bannerpp.mixin.client;
 
-import io.github.kvverti.bannerpp.Bannerpp;
 import io.github.kvverti.bannerpp.LoomPatternData;
 import io.github.kvverti.bannerpp.api.LoomPattern;
+import io.github.kvverti.bannerpp.api.LoomPatterns;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
 
 import java.util.ArrayList;
@@ -130,7 +130,7 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
     }
 
     private String partialCacheKey(LoomPatternData data) {
-        return "#" + Bannerpp.LOOM_PATTERN_REGISTRY.getRawId(data.pattern) + "-" + data.color.getId();
+        return "#" + LoomPatterns.REGISTRY.getRawId(data.pattern) + "-" + data.color.getId();
     }
 
     @Unique
@@ -138,7 +138,7 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
         ListTag patterns = new ListTag();
         for(LoomPatternData data : loomPatterns) {
             CompoundTag patternTag = new CompoundTag();
-            patternTag.putString("Pattern", Bannerpp.LOOM_PATTERN_REGISTRY.getId(data.pattern).toString());
+            patternTag.putString("Pattern", LoomPatterns.REGISTRY.getId(data.pattern).toString());
             patternTag.putInt("Color", data.color.getId());
             patternTag.putInt("Index", data.index);
         }
@@ -152,7 +152,7 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
         if(tag != null) {
             for(Tag t : tag) {
                 CompoundTag patternTag = (CompoundTag)t;
-                LoomPattern pattern = Bannerpp.LOOM_PATTERN_REGISTRY.get(new Identifier(patternTag.getString("Pattern")));
+                LoomPattern pattern = LoomPatterns.REGISTRY.get(new Identifier(patternTag.getString("Pattern")));
                 DyeColor color = DyeColor.byId(patternTag.getInt("Color"));
                 int index = patternTag.getInt("Index");
                 loomPatterns.add(new LoomPatternData(pattern, color, index));

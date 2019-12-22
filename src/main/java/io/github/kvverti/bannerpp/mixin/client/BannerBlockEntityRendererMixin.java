@@ -1,8 +1,8 @@
 package io.github.kvverti.bannerpp.mixin.client;
 
-import io.github.kvverti.bannerpp.Bannerpp;
 import io.github.kvverti.bannerpp.LoomPatternData;
 import io.github.kvverti.bannerpp.api.LoomPattern;
+import io.github.kvverti.bannerpp.api.LoomPatterns;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
 
 import java.util.List;
@@ -91,7 +91,7 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
 
     @Unique
     private static void renderBppLoomPattern(LoomPatternData data, MatrixStack stack, VertexConsumerProvider provider, ModelPart part, int haha, int no, boolean notShield) {
-        Identifier spriteId = LoomPattern.getSpriteId(Bannerpp.LOOM_PATTERN_REGISTRY.getId(data.pattern), notShield ? "banner" : "shield");
+        Identifier spriteId = LoomPattern.getSpriteId(LoomPatterns.REGISTRY.getId(data.pattern), notShield ? "banner" : "shield");
         SpriteIdentifier realSpriteId = new SpriteIdentifier(notShield ? TexturedRenderLayers.BANNER_PATTERNS_ATLAS_TEXTURE : TexturedRenderLayers.SHIELD_PATTERNS_ATLAS_TEXTURE, spriteId);
         float[] color = data.color.getColorComponents();
         part.render(stack, realSpriteId.getVertexConsumer(provider, RenderLayer::getEntityNoOutline), haha, no, color[0], color[1], color[2], 1.0f);

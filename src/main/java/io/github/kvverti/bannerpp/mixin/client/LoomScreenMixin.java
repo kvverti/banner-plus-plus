@@ -1,7 +1,7 @@
 package io.github.kvverti.bannerpp.mixin.client;
 
-import io.github.kvverti.bannerpp.Bannerpp;
 import io.github.kvverti.bannerpp.api.LoomPattern;
+import io.github.kvverti.bannerpp.api.LoomPatterns;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
 
 import net.minecraft.block.entity.BannerBlockEntity;
@@ -46,7 +46,7 @@ public abstract class LoomScreenMixin extends AbstractContainerScreen<LoomContai
         )
     )
     private static int takeBppIntoAccountForRowCount() {
-        return BannerPattern.COUNT + Bannerpp.dyeLoomPatternCount();
+        return BannerPattern.COUNT + LoomPatterns.dyeLoomPatternCount();
     }
 
     /**
@@ -61,7 +61,7 @@ public abstract class LoomScreenMixin extends AbstractContainerScreen<LoomContai
         )
     )
     private int modifyDyePatternCount() {
-        return BannerPattern.COUNT + Bannerpp.dyeLoomPatternCount();
+        return BannerPattern.COUNT + LoomPatterns.dyeLoomPatternCount();
     }
 
     @Redirect(
@@ -130,10 +130,10 @@ public abstract class LoomScreenMixin extends AbstractContainerScreen<LoomContai
     private Tag proxyPutPatterns(CompoundTag tag, String key, Tag patterns) {
         if(loomPatternIndex < 0) {
             int loomPatternIdx = -loomPatternIndex - (1 + BannerPattern.LOOM_APPLICABLE_COUNT);
-            LoomPattern pattern = Bannerpp.byLoomIndex(loomPatternIdx);
+            LoomPattern pattern = LoomPatterns.byLoomIndex(loomPatternIdx);
             ListTag loomPatterns = new ListTag();
             CompoundTag patternTag = new CompoundTag();
-            patternTag.putString("Pattern", Bannerpp.LOOM_PATTERN_REGISTRY.getId(pattern).toString());
+            patternTag.putString("Pattern", LoomPatterns.REGISTRY.getId(pattern).toString());
             patternTag.putInt("Color", 0);
             patternTag.putInt("Index", 1);
             loomPatterns.add(patternTag);
