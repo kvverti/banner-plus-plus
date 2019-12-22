@@ -2,8 +2,9 @@ package io.github.kvverti.bannerpp.api;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.util.registry.SimpleRegistry;
+
 import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.SimpleRegistry;
 
 /**
  * Loom pattern utility methods.

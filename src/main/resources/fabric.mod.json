@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Banner++",
-  "description": "More banner and shield patterns.",
+  "description": "Provides an API to add more banner and shield patterns.",
   "authors": [
     "kvverti"
   ],
@@ -28,6 +28,9 @@
   "mixins": [
     "bannerpp.mixins.json"
   ],
+  "custom": {
+    "modmenu:api": true  
+  },
   "depends": {
     "fabricloader": ">=0.6.0",
     "fabric": "*"
