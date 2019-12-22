@@ -4,23 +4,31 @@ import io.github.kvverti.bannerpp.Bannerpp;
 import io.github.kvverti.bannerpp.api.LoomPattern;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
 
+import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
 import net.minecraft.client.gui.screen.ingame.LoomScreen;
 import net.minecraft.container.LoomContainer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LoomScreen.class)
 public abstract class LoomScreenMixin extends AbstractContainerScreen<LoomContainer> {
+
+    @Shadow private boolean hasTooManyPatterns;
 
     private LoomScreenMixin() {
         super(null, null, null);
@@ -70,6 +78,20 @@ public abstract class LoomScreenMixin extends AbstractContainerScreen<LoomContai
             res = -res;
         }
         return res;
+    }
+
+    @Inject(
+        method = "onInventoryChanged",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/client/gui/screen/ingame/LoomScreen;hasTooManyPatterns:Z",
+            opcode = Opcodes.GETFIELD,
+            ordinal = 0
+        )
+    )
+    private void addBppLoomPatternsToFullCond(CallbackInfo info) {
+        ItemStack banner = ((LoomContainer)this.container).getBannerSlot().getStack();
+        this.hasTooManyPatterns |= BannerBlockEntity.getPatternCount(banner) >= 6;
     }
 
     @Unique
