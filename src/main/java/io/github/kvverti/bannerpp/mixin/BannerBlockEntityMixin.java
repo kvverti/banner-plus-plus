@@ -46,6 +46,28 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
     @Override
     public void bannerpp_setLoomPatternTag(ListTag tag) {
         loomPatternsTag = tag;
+        if(loomPatternsTag != null) {
+            // validate NBT data, removing and/or resetting invalid data
+            for(Iterator<Tag> itr = loomPatternsTag.iterator(); itr.hasNext(); ) {
+                CompoundTag element = (CompoundTag)itr.next();
+                Identifier id = Identifier.tryParse(element.getString("Pattern"));
+                int colorId = element.getInt("Color");
+                int index = element.getInt("Index");
+                if(id == null || !LoomPatterns.REGISTRY.containsId(id)) {
+                    itr.remove();
+                } else {
+                    int rtColorId = DyeColor.byId(colorId).getId();
+                    if(rtColorId != colorId) {
+                        element.putInt("Color", rtColorId);
+                    }
+                    if(index < 0) {
+                        element.putInt("Index", 0);
+                    }
+                }
+            }
+            // the Java API requires that this sort be stable
+            loomPatternsTag.sort(comparingInt(t -> ((CompoundTag)t).getInt("Index")));
+        }
     }
 
     /**
@@ -112,26 +134,6 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
      */
     @Inject(method = "fromTag", at = @At("RETURN"))
     private void readBppPatternData(CompoundTag tag, CallbackInfo info) {
-        loomPatternsTag = tag.getList(LoomPatternContainer.NBT_KEY, 10);
-        // validate NBT data, removing and/or resetting invalid data
-        for(Iterator<Tag> itr = loomPatternsTag.iterator(); itr.hasNext(); ) {
-            CompoundTag element = (CompoundTag)itr.next();
-            Identifier id = Identifier.tryParse(element.getString("Pattern"));
-            int colorId = element.getInt("Color");
-            int index = element.getInt("Index");
-            if(id == null || !LoomPatterns.REGISTRY.containsId(id)) {
-                itr.remove();
-            } else {
-                int rtColorId = DyeColor.byId(colorId).getId();
-                if(rtColorId != colorId) {
-                    element.putInt("Color", rtColorId);
-                }
-                if(index < 0) {
-                    element.putInt("Index", 0);
-                }
-            }
-        }
-        // the Java API requires that this sort be stable
-        loomPatternsTag.sort(comparingInt(t -> ((CompoundTag)t).getInt("Index")));
+        bannerpp_setLoomPatternTag(tag.getList(LoomPatternContainer.NBT_KEY, 10));
     }
 }
