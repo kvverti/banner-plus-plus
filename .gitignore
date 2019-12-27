@@ -28,3 +28,6 @@ run/
 
 # images
 *.xcf
+
+# artifactory publishing
+private.gradle
