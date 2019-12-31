@@ -1,6 +1,17 @@
 # banner-plus-plus
 Library mod for the Fabric platform that allows mods to add banner patterns in a hastle-free way. 
 
+## Dependents
+To depend on Banner++, add the following to your `build.gradle` repository block.
+
+```groovy
+repositories {
+	maven {
+		url 'http://server.bbkr.space:8081/artifactory/libs-release'
+	}
+}
+```
+
 ## Adding Custom Patterns
 Custom patterns are encapsulated in `LoomPattern` objects, which are registered in a vanilla Minecraft registry. Thus, you can register custom patterns by simply adding a new `LoomPattern` to the registry.
 
