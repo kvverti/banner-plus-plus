@@ -3,15 +3,18 @@ package io.github.kvverti.bannerpp.mixin;
 import io.github.kvverti.bannerpp.api.LoomPattern;
 import io.github.kvverti.bannerpp.api.LoomPatterns;
 import io.github.kvverti.bannerpp.api.LoomPatternItem;
+import io.github.kvverti.bannerpp.api.PatternLimitModifier;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
 
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
+import net.minecraft.container.BlockContext;
 import net.minecraft.container.Container;
 import net.minecraft.container.LoomContainer;
 import net.minecraft.container.Property;
 import net.minecraft.container.Slot;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -21,8 +24,11 @@ import net.minecraft.util.DyeColor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -37,11 +43,25 @@ public abstract class LoomContainerMixin extends Container {
     @Shadow @Final private Slot patternSlot;
     @Shadow @Final private Slot outputSlot;
 
+    @Unique
+    private PlayerEntity player;
+
     private LoomContainerMixin() {
         super(null, 0);
     }
 
     @Shadow private native void updateOutputSlot();
+
+    /**
+     * Saves the player entity for computing the banner pattern limit.
+     */
+    @Inject(
+        method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/container/BlockContext;)V",
+        at = @At("RETURN")
+    )
+    private void bppSavePlayer(int capacity, PlayerInventory playerInventory, BlockContext ctx, CallbackInfo info) {
+        player = playerInventory.player;
+    }
 
     /**
      * When the player clicks on a square that contains a loom pattern,
@@ -56,6 +76,18 @@ public abstract class LoomContainerMixin extends Container {
             this.updateOutputSlot();
             info.setReturnValue(true);
         }
+    }
+
+    @Unique
+    private int patternLimit;
+
+    /**
+     * Computes and saves the banner pattern limit for this player to be
+     * used server side.
+     */
+    @Inject(method = "onContentChanged", at = @At("HEAD"))
+    private void invokePatternLimitEvent(CallbackInfo info) {
+        patternLimit = PatternLimitModifier.EVENT.invoker().computePatternLimit(6, player);
     }
 
     /**
@@ -78,6 +110,11 @@ public abstract class LoomContainerMixin extends Container {
         return res;
     }
 
+    @ModifyConstant(method = "onContentChanged", constant = @Constant(intValue = 6))
+    private int disarmVanillaPatternLimitCheck(int limit) {
+        return Integer.MAX_VALUE;
+    }
+
     @ModifyVariable(
         method = "onContentChanged",
         at = @At(value = "LOAD", ordinal = 0),
@@ -85,7 +122,7 @@ public abstract class LoomContainerMixin extends Container {
     )
     private boolean addBppLoomPatternsToFullCond(boolean original) {
         ItemStack banner = this.bannerSlot.getStack();
-        return original || BannerBlockEntity.getPatternCount(banner) >= 6;
+        return original || BannerBlockEntity.getPatternCount(banner) >= patternLimit;
     }
 
     /**
@@ -114,7 +151,7 @@ public abstract class LoomContainerMixin extends Container {
         ItemStack patternStack = this.patternSlot.getStack();
         // only run for special loom patterns
         if(!patternStack.isEmpty() && patternStack.getItem() instanceof LoomPatternItem) {
-            boolean overfull = BannerBlockEntity.getPatternCount(banner) >= 6;
+            boolean overfull = BannerBlockEntity.getPatternCount(banner) >= patternLimit;
             if(!overfull) {
                 LoomPattern pattern = ((LoomPatternItem)patternStack.getItem()).getPattern();
                 this.selectedPattern.set(-LoomPatterns.getLoomIndex(pattern) - (1 + BannerPattern.LOOM_APPLICABLE_COUNT));

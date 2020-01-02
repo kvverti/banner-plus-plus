@@ -2,6 +2,7 @@ package io.github.kvverti.bannerpp.mixin.client;
 
 import io.github.kvverti.bannerpp.api.LoomPattern;
 import io.github.kvverti.bannerpp.api.LoomPatterns;
+import io.github.kvverti.bannerpp.api.PatternLimitModifier;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
 
 import net.minecraft.block.entity.BannerBlockEntity;
@@ -19,8 +20,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -80,6 +83,11 @@ public abstract class LoomScreenMixin extends AbstractContainerScreen<LoomContai
         return res;
     }
 
+    @ModifyConstant(method = "onInventoryChanged", constant = @Constant(intValue = 6))
+    private int disarmVanillaPatternLimitCheck(int limit) {
+        return Integer.MAX_VALUE;
+    }
+
     @Inject(
         method = "onInventoryChanged",
         at = @At(
@@ -91,7 +99,8 @@ public abstract class LoomScreenMixin extends AbstractContainerScreen<LoomContai
     )
     private void addBppLoomPatternsToFullCond(CallbackInfo info) {
         ItemStack banner = ((LoomContainer)this.container).getBannerSlot().getStack();
-        this.hasTooManyPatterns |= BannerBlockEntity.getPatternCount(banner) >= 6;
+        int patternLimit = PatternLimitModifier.EVENT.invoker().computePatternLimit(6, this.playerInventory.player);
+        this.hasTooManyPatterns |= BannerBlockEntity.getPatternCount(banner) >= patternLimit;
     }
 
     @Unique
