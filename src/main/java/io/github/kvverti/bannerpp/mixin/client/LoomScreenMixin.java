@@ -1,19 +1,26 @@
 package io.github.kvverti.bannerpp.mixin.client;
 
+import io.github.kvverti.bannerpp.LoomPatternData;
 import io.github.kvverti.bannerpp.api.LoomPattern;
 import io.github.kvverti.bannerpp.api.LoomPatterns;
 import io.github.kvverti.bannerpp.api.PatternLimitModifier;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
+import io.github.kvverti.bannerpp.iface.LoomPatternRenderContext;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
-import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
+import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.client.gui.screen.ingame.LoomScreen;
 import net.minecraft.container.LoomContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.DyeColor;
 
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,7 +36,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LoomScreen.class)
-public abstract class LoomScreenMixin extends AbstractContainerScreen<LoomContainer> {
+public abstract class LoomScreenMixin extends ContainerScreen<LoomContainer> {
 
     @Shadow private boolean hasTooManyPatterns;
 
@@ -124,6 +131,9 @@ public abstract class LoomScreenMixin extends AbstractContainerScreen<LoomContai
         return patternIndex;
     }
 
+    @Unique
+    private static final List<LoomPatternData> singleBppPattern = new ArrayList<>();
+
     /**
      * If the pattern index indicates a Banner++ pattern, put the Banner++
      * pattern in the item NBT instead of a vanilla pattern.
@@ -137,6 +147,7 @@ public abstract class LoomScreenMixin extends AbstractContainerScreen<LoomContai
         )
     )
     private Tag proxyPutPatterns(CompoundTag tag, String key, Tag patterns) {
+        singleBppPattern.clear();
         if(loomPatternIndex < 0) {
             int loomPatternIdx = -loomPatternIndex - (1 + BannerPattern.LOOM_APPLICABLE_COUNT);
             LoomPattern pattern = LoomPatterns.byLoomIndex(loomPatternIdx);
@@ -151,8 +162,21 @@ public abstract class LoomScreenMixin extends AbstractContainerScreen<LoomContai
             assert vanillaPatterns.size() == 2 : vanillaPatterns.size();
             vanillaPatterns.remove(1);
             tag.put(LoomPatternContainer.NBT_KEY, loomPatterns);
+            singleBppPattern.add(new LoomPatternData(pattern, DyeColor.BLACK, 1));
         }
+        LoomPatternRenderContext.setLoomPatterns(singleBppPattern);
         return tag.put(key, patterns);
+    }
+
+    @Inject(
+        method = "drawBackground",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/render/block/entity/BannerBlockEntityRenderer;method_23802(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/util/SpriteIdentifier;ZLjava/util/List;)V"
+        )
+    )
+    private void setEmptyBppPattern(CallbackInfo info) {
+        LoomPatternRenderContext.setLoomPatterns(Collections.emptyList());
     }
 
     /**

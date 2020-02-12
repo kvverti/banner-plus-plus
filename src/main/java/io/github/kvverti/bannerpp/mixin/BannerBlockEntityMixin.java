@@ -32,7 +32,7 @@ import static java.util.Comparator.comparingInt;
 public abstract class BannerBlockEntityMixin extends BlockEntity implements LoomPatternContainer.Internal {
 
     @Unique
-    public ListTag loomPatternsTag = new ListTag();
+    private ListTag loomPatternsTag = new ListTag();
 
     private BannerBlockEntityMixin() {
         super(null);

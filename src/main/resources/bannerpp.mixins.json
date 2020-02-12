@@ -11,6 +11,7 @@
     "client.BannerBlockEntityClientMixin",
     "client.BannerBlockEntityRendererMixin",
     "client.BannerItemMixin",
+    "client.BuiltinModelItemRendererMixin",
     "client.LoomScreenMixin"
   ],
   "injectors": {

@@ -226,7 +226,7 @@ public abstract class LoomContainerMixin extends Container {
         cancellable = true
     )
     private void attemptBppPatternItemTransfer(PlayerEntity player, int slotIdx, CallbackInfoReturnable<ItemStack> info) {
-        ItemStack stack = this.slotList.get(slotIdx).getStack();
+        ItemStack stack = this.slots.get(slotIdx).getStack();
         if(stack.getItem() instanceof LoomPatternItem) {
             if(!this.insertItem(stack, this.patternSlot.id, this.patternSlot.id + 1, false)) {
                 info.setReturnValue(ItemStack.EMPTY);

@@ -1,10 +1,14 @@
 package io.github.kvverti.bannerpp.mixin.client;
 
+import com.mojang.datafixers.util.Pair;
+
 import io.github.kvverti.bannerpp.LoomPatternData;
 import io.github.kvverti.bannerpp.api.LoomPattern;
 import io.github.kvverti.bannerpp.api.LoomPatterns;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
+import io.github.kvverti.bannerpp.iface.LoomPatternRenderContext;
 
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.block.entity.BannerBlockEntity;
@@ -43,11 +47,16 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
     /**
      * Saves Banner++ loom pattens in a field for rendering.
      */
+    @Inject(method = "render", at = @At("HEAD"))
+    private void preBppPatternRender(BannerBlockEntity banner, float f1,
+            MatrixStack stack, VertexConsumerProvider provider, int i, int j, CallbackInfo info) {
+        LoomPatternRenderContext.setLoomPatterns(((LoomPatternContainer)banner).bannerpp_getLoomPatterns());
+    }
+
     @Inject(method = "method_23802", at = @At("HEAD"))
-    private static void preBppPatternRender(BannerBlockEntity banner, MatrixStack stack,
-            VertexConsumerProvider provider, int haha, int no, ModelPart part, SpriteIdentifier spriteId, boolean notShield, CallbackInfo info) {
+    private static void bppResetLocalCtx(CallbackInfo info) {
         nextLoomPatternIndex = 0;
-        loomPatterns = ((LoomPatternContainer)banner).bannerpp_getLoomPatterns();
+        loomPatterns = LoomPatternRenderContext.getLoomPatterns();
     }
 
     /**
@@ -63,9 +72,10 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
         ),
         locals = LocalCapture.CAPTURE_FAILHARD
     )
-    private static void bppPatternRenderInline(BannerBlockEntity banner, MatrixStack stack,
-            VertexConsumerProvider provider, int haha, int no, ModelPart part, SpriteIdentifier spriteId, boolean notShield, CallbackInfo info,
-            List<BannerPattern> ls1, List<DyeColor> ls2, int idx) {
+    private static void bppPatternRenderInline(MatrixStack stack, VertexConsumerProvider provider,
+            int haha, int no, ModelPart part, SpriteIdentifier spriteId, boolean notShield,
+            List<Pair<BannerPattern, DyeColor>> list, CallbackInfo info,
+            int idx) {
         while(nextLoomPatternIndex < loomPatterns.size()) {
             LoomPatternData data = loomPatterns.get(nextLoomPatternIndex);
             if(data.index == idx - 1) {
@@ -81,12 +91,13 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
      * Renders Banner++ loom patterns that occur after all vanilla banner patterns.
      */
     @Inject(method = "method_23802", at = @At("RETURN"))
-    private static void bppPatternRenderPost(BannerBlockEntity banner, MatrixStack stack,
-            VertexConsumerProvider provider, int haha, int no, ModelPart part, SpriteIdentifier spriteId, boolean notShield, CallbackInfo info) {
+    private static void bppPatternRenderPost(MatrixStack stack, VertexConsumerProvider provider,
+            int haha, int no, ModelPart part, SpriteIdentifier spriteId, boolean notShield,
+            List<Pair<BannerPattern, DyeColor>> list, CallbackInfo info) {
         for(int i = nextLoomPatternIndex; i < loomPatterns.size(); i++) {
             renderBppLoomPattern(loomPatterns.get(i), stack, provider, part, haha, no, notShield);
         }
-        loomPatterns = null;
+        loomPatterns = Collections.emptyList();
     }
 
     @Unique
