@@ -5,6 +5,7 @@ import io.github.kvverti.bannerpp.api.LoomPattern;
 import io.github.kvverti.bannerpp.api.LoomPatterns;
 import io.github.kvverti.bannerpp.api.PatternLimitModifier;
 import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
+import io.github.kvverti.bannerpp.iface.LoomPatternConversions;
 import io.github.kvverti.bannerpp.iface.LoomPatternRenderContext;
 
 import java.util.ArrayList;
@@ -39,6 +40,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class LoomScreenMixin extends ContainerScreen<LoomContainer> {
 
     @Shadow private boolean hasTooManyPatterns;
+    @Shadow private List<?> field_21841;
+
+    @Unique
+    private List<LoomPatternData> loomPatterns = Collections.emptyList();
 
     private LoomScreenMixin() {
         super(null, null, null);
@@ -110,6 +115,17 @@ public abstract class LoomScreenMixin extends ContainerScreen<LoomContainer> {
         this.hasTooManyPatterns |= BannerBlockEntity.getPatternCount(banner) >= patternLimit;
     }
 
+    @Inject(method = "onInventoryChanged", at = @At("RETURN"))
+    private void saveLoomPatterns(CallbackInfo info) {
+        if(this.field_21841 != null) {
+            ItemStack banner = ((LoomContainer)this.container).getOutputSlot().getStack();
+            ListTag tag = LoomPatternConversions.getLoomPatternTag(banner);
+            loomPatterns = LoomPatternConversions.makeLoomPatternData(tag);
+        } else {
+            loomPatterns = Collections.emptyList();
+        }
+    }
+
     @Unique
     private int loomPatternIndex;
 
@@ -162,7 +178,7 @@ public abstract class LoomScreenMixin extends ContainerScreen<LoomContainer> {
             assert vanillaPatterns.size() == 2 : vanillaPatterns.size();
             vanillaPatterns.remove(1);
             tag.put(LoomPatternContainer.NBT_KEY, loomPatterns);
-            singleBppPattern.add(new LoomPatternData(pattern, DyeColor.BLACK, 1));
+            singleBppPattern.add(new LoomPatternData(pattern, DyeColor.WHITE, 1));
         }
         LoomPatternRenderContext.setLoomPatterns(singleBppPattern);
         return tag.put(key, patterns);
@@ -176,7 +192,7 @@ public abstract class LoomScreenMixin extends ContainerScreen<LoomContainer> {
         )
     )
     private void setEmptyBppPattern(CallbackInfo info) {
-        LoomPatternRenderContext.setLoomPatterns(Collections.emptyList());
+        LoomPatternRenderContext.setLoomPatterns(loomPatterns);
     }
 
     /**
