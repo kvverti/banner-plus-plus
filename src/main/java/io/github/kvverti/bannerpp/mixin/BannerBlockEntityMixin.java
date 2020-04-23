@@ -1,7 +1,7 @@
 package io.github.kvverti.bannerpp.mixin;
 
 import io.github.kvverti.bannerpp.api.LoomPatterns;
-import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
+import io.github.kvverti.bannerpp.impl.iface.LoomPatternContainer;
 
 import java.util.Iterator;
 

@@ -2,11 +2,11 @@ package io.github.kvverti.bannerpp.mixin.client;
 
 import com.mojang.datafixers.util.Pair;
 
-import io.github.kvverti.bannerpp.LoomPatternData;
+import io.github.kvverti.bannerpp.impl.LoomPatternData;
 import io.github.kvverti.bannerpp.api.LoomPattern;
 import io.github.kvverti.bannerpp.api.LoomPatterns;
-import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
-import io.github.kvverti.bannerpp.iface.LoomPatternRenderContext;
+import io.github.kvverti.bannerpp.impl.iface.LoomPatternContainer;
+import io.github.kvverti.bannerpp.impl.LoomPatternRenderContext;
 
 import java.util.Collections;
 import java.util.List;

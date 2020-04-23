@@ -1,12 +1,14 @@
-package io.github.kvverti.bannerpp.iface;
+package io.github.kvverti.bannerpp.impl;
 
 import java.util.ArrayList;
+
+import io.github.kvverti.bannerpp.impl.iface.LoomPatternContainer;
 import net.minecraft.util.Identifier;
 import io.github.kvverti.bannerpp.api.LoomPatterns;
 import net.minecraft.util.DyeColor;
 import io.github.kvverti.bannerpp.api.LoomPattern;
 import net.minecraft.nbt.Tag;
-import io.github.kvverti.bannerpp.LoomPatternData;
+import io.github.kvverti.bannerpp.impl.LoomPatternData;
 import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;

@@ -1,6 +1,6 @@
-package io.github.kvverti.bannerpp.iface;
+package io.github.kvverti.bannerpp.impl;
 
-import io.github.kvverti.bannerpp.LoomPatternData;
+import io.github.kvverti.bannerpp.impl.LoomPatternData;
 
 import java.util.Collections;
 import java.util.List;

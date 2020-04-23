@@ -1,12 +1,12 @@
 package io.github.kvverti.bannerpp.mixin.client;
 
-import io.github.kvverti.bannerpp.LoomPatternData;
+import io.github.kvverti.bannerpp.impl.LoomPatternData;
 import io.github.kvverti.bannerpp.api.LoomPattern;
 import io.github.kvverti.bannerpp.api.LoomPatterns;
 import io.github.kvverti.bannerpp.api.PatternLimitModifier;
-import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
-import io.github.kvverti.bannerpp.iface.LoomPatternConversions;
-import io.github.kvverti.bannerpp.iface.LoomPatternRenderContext;
+import io.github.kvverti.bannerpp.impl.iface.LoomPatternContainer;
+import io.github.kvverti.bannerpp.impl.LoomPatternConversions;
+import io.github.kvverti.bannerpp.impl.LoomPatternRenderContext;
 
 import java.util.ArrayList;
 import java.util.Collections;

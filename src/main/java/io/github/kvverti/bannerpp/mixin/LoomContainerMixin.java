@@ -4,7 +4,7 @@ import io.github.kvverti.bannerpp.api.LoomPattern;
 import io.github.kvverti.bannerpp.api.LoomPatterns;
 import io.github.kvverti.bannerpp.api.LoomPatternItem;
 import io.github.kvverti.bannerpp.api.PatternLimitModifier;
-import io.github.kvverti.bannerpp.iface.LoomPatternContainer;
+import io.github.kvverti.bannerpp.impl.iface.LoomPatternContainer;
 
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;

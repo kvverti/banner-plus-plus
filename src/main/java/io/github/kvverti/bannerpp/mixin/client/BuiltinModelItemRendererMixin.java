@@ -1,7 +1,7 @@
 package io.github.kvverti.bannerpp.mixin.client;
 
-import io.github.kvverti.bannerpp.iface.LoomPatternConversions;
-import io.github.kvverti.bannerpp.iface.LoomPatternRenderContext;
+import io.github.kvverti.bannerpp.impl.LoomPatternConversions;
+import io.github.kvverti.bannerpp.impl.LoomPatternRenderContext;
 
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
