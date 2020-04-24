@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.container.Slot;
 import net.minecraft.item.ItemStack;
 
+@SuppressWarnings("UnresolvedMixinReference")
 @Mixin(targets = "net.minecraft.container.LoomContainer$5")
 public abstract class LoomContainerPatternSlotMixin extends Slot {
 	private LoomContainerPatternSlotMixin() {

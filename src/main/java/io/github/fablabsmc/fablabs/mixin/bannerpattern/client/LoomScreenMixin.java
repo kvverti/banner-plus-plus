@@ -53,6 +53,7 @@ public abstract class LoomScreenMixin extends ContainerScreen<LoomContainer> {
 	 * Adds the number of rows corresponding to Banner++ loom patterns
 	 * to the loom GUI.
 	 */
+	@SuppressWarnings("UnresolvedMixinReference")
 	@Redirect(
 			method = "<clinit>",
 			at = @At(
@@ -112,7 +113,7 @@ public abstract class LoomScreenMixin extends ContainerScreen<LoomContainer> {
 			)
 	)
 	private void addBppLoomPatternsToFullCond(CallbackInfo info) {
-		ItemStack banner = ((LoomContainer) this.container).getBannerSlot().getStack();
+		ItemStack banner = (this.container).getBannerSlot().getStack();
 		int patternLimit = PatternLimitModifier.EVENT.invoker().computePatternLimit(6, this.playerInventory.player);
 		this.hasTooManyPatterns |= BannerBlockEntity.getPatternCount(banner) >= patternLimit;
 	}
@@ -120,7 +121,7 @@ public abstract class LoomScreenMixin extends ContainerScreen<LoomContainer> {
 	@Inject(method = "onInventoryChanged", at = @At("RETURN"))
 	private void saveLoomPatterns(CallbackInfo info) {
 		if (this.field_21841 != null) {
-			ItemStack banner = ((LoomContainer) this.container).getOutputSlot().getStack();
+			ItemStack banner = (this.container).getOutputSlot().getStack();
 			ListTag tag = LoomPatternConversions.getLoomPatternTag(banner);
 			loomPatterns = LoomPatternConversions.makeLoomPatternData(tag);
 		} else {
