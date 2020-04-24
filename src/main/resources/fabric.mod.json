@@ -20,10 +20,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.github.kvverti.bannerpp.Bannerpp"
+      "io.github.kvverti.bannerpp.impl.Bannerpp"
     ],
     "client": [
-      "io.github.kvverti.bannerpp.BannerppClient"
+      "io.github.kvverti.bannerpp.impl.BannerppClient"
     ]
   },
   "mixins": [

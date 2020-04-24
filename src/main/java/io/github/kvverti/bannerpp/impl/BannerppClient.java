@@ -1,4 +1,4 @@
-package io.github.kvverti.bannerpp;
+package io.github.kvverti.bannerpp.impl;
 
 import io.github.kvverti.bannerpp.api.LoomPattern;
 import io.github.kvverti.bannerpp.api.LoomPatterns;
