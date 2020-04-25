@@ -13,10 +13,6 @@ public class LoomPattern {
 		this.special = special;
 	}
 
-	public LoomPattern() {
-		this(false);
-	}
-
 	/**
 	 * Whether this loom pattern requres an item in the pattern slot.
 	 */

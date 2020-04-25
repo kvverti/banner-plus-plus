@@ -3,7 +3,6 @@ package io.github.fablabsmc.fablabs.mixin.bannerpattern.client;
 import java.util.Collections;
 import java.util.List;
 
-import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPatterns;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.LoomPatternConversions;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.LoomPatternData;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.iface.LoomPatternContainer;
@@ -18,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.util.DyeColor;
 
@@ -66,19 +64,5 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
 			stack.getOrCreateSubTag("BlockEntityTag")
 					.put(NBT_KEY, tag);
 		}
-	}
-
-	@Unique
-	private ListTag writeLoomPatternTag() {
-		ListTag patterns = new ListTag();
-
-		for (LoomPatternData data : loomPatterns) {
-			CompoundTag patternTag = new CompoundTag();
-			patternTag.putString("Pattern", LoomPatterns.REGISTRY.getId(data.pattern).toString());
-			patternTag.putInt("Color", data.color.getId());
-			patternTag.putInt("Index", data.index);
-		}
-
-		return patterns;
 	}
 }
