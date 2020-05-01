@@ -20,10 +20,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.github.kvverti.bannerpp.Bannerpp"
+      "io.github.fablabsmc.fablabs.impl.bannerpattern.Bannerpp"
     ],
     "client": [
-      "io.github.kvverti.bannerpp.BannerppClient"
+      "io.github.fablabsmc.fablabs.impl.bannerpattern.BannerppClient"
     ]
   },
   "mixins": [
