@@ -26,17 +26,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
-import net.minecraft.client.gui.screen.ingame.ContainerScreen;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.LoomScreen;
-import net.minecraft.container.LoomContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.screen.LoomScreenHandler;
 import net.minecraft.util.DyeColor;
 
 @Mixin(LoomScreen.class)
-public abstract class LoomScreenMixin extends ContainerScreen<LoomContainer> {
+public abstract class LoomScreenMixin extends HandledScreen<LoomScreenHandler> {
 	@Shadow
 	private boolean hasTooManyPatterns;
 	@Shadow
@@ -84,11 +84,11 @@ public abstract class LoomScreenMixin extends ContainerScreen<LoomContainer> {
 			method = "drawBackground",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/container/LoomContainer;getSelectedPattern()I",
+					target = "Lnet/minecraft/screen/LoomScreenHandler;getSelectedPattern()I",
 					ordinal = 0
 			)
 	)
-	private int negateBppLoomPatternForCmp(LoomContainer self) {
+	private int negateBppLoomPatternForCmp(LoomScreenHandler self) {
 		int res = self.getSelectedPattern();
 
 		if (res < 0) {
@@ -113,7 +113,7 @@ public abstract class LoomScreenMixin extends ContainerScreen<LoomContainer> {
 			)
 	)
 	private void addBppLoomPatternsToFullCond(CallbackInfo info) {
-		ItemStack banner = (this.container).getBannerSlot().getStack();
+		ItemStack banner = (this.handler).getBannerSlot().getStack();
 		int patternLimit = PatternLimitModifier.EVENT.invoker().computePatternLimit(6, this.playerInventory.player);
 		this.hasTooManyPatterns |= BannerBlockEntity.getPatternCount(banner) >= patternLimit;
 	}
@@ -121,7 +121,7 @@ public abstract class LoomScreenMixin extends ContainerScreen<LoomContainer> {
 	@Inject(method = "onInventoryChanged", at = @At("RETURN"))
 	private void saveLoomPatterns(CallbackInfo info) {
 		if (this.field_21841 != null) {
-			ItemStack banner = (this.container).getOutputSlot().getStack();
+			ItemStack banner = (this.handler).getOutputSlot().getStack();
 			ListTag tag = LoomPatternConversions.getLoomPatternTag(banner);
 			loomPatterns = LoomPatternConversions.makeLoomPatternData(tag);
 		} else {
@@ -195,7 +195,7 @@ public abstract class LoomScreenMixin extends ContainerScreen<LoomContainer> {
 			method = "drawBackground",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/render/block/entity/BannerBlockEntityRenderer;method_23802(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/util/SpriteIdentifier;ZLjava/util/List;)V"
+					target = "Lnet/minecraft/client/render/block/entity/BannerBlockEntityRenderer;renderCanvas(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/util/SpriteIdentifier;ZLjava/util/List;)V"
 			)
 	)
 	private void setEmptyBppPattern(CallbackInfo info) {

@@ -7,6 +7,7 @@ import java.util.List;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
@@ -27,7 +28,7 @@ public class LoomPatternItem extends Item {
 		return pattern;
 	}
 
-	public Text getDescription() {
+	public MutableText getDescription() {
 		return new TranslatableText(this.getTranslationKey() + ".desc");
 	}
 

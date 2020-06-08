@@ -20,21 +20,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
-import net.minecraft.container.BlockContext;
-import net.minecraft.container.Container;
-import net.minecraft.container.LoomContainer;
-import net.minecraft.container.Property;
-import net.minecraft.container.Slot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.screen.LoomScreenHandler;
+import net.minecraft.screen.Property;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.DyeColor;
 
-@Mixin(LoomContainer.class)
-public abstract class LoomContainerMixin extends Container {
+@Mixin(LoomScreenHandler.class)
+public abstract class LoomContainerMixin extends ScreenHandler {
 	@Shadow
 	@Final
 	private Property selectedPattern;
@@ -65,10 +65,10 @@ public abstract class LoomContainerMixin extends Container {
 	 * Saves the player entity for computing the banner pattern limit.
 	 */
 	@Inject(
-			method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/container/BlockContext;)V",
+			method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/screen/ScreenHandlerContext;)V",
 			at = @At("RETURN")
 	)
-	private void bppSavePlayer(int capacity, PlayerInventory playerInventory, BlockContext ctx, CallbackInfo info) {
+	private void bppSavePlayer(int capacity, PlayerInventory playerInventory, ScreenHandlerContext ctx, CallbackInfo info) {
 		player = playerInventory.player;
 	}
 
@@ -109,7 +109,7 @@ public abstract class LoomContainerMixin extends Container {
 			method = "onContentChanged",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/container/Property;get()I"
+					target = "Lnet/minecraft/screen/Property;get()I"
 			)
 	)
 	private int addBppLoomPatternCondition(Property self) {
@@ -213,7 +213,7 @@ public abstract class LoomContainerMixin extends Container {
 				patternTag.putInt("Index", vanillaPatternCount);
 				loomPatterns.add(patternTag);
 
-				if (!ItemStack.areEqualIgnoreDamage(output, this.outputSlot.getStack())) {
+				if (!ItemStack.areEqual(output, this.outputSlot.getStack())) {
 					this.outputSlot.setStack(output);
 				}
 			}

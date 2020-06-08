@@ -56,7 +56,7 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
 		LoomPatternRenderContext.setLoomPatterns(((LoomPatternContainer) banner).bannerpp_getLoomPatterns());
 	}
 
-	@Inject(method = "method_23802", at = @At("HEAD"))
+	@Inject(method = "renderCanvas", at = @At("HEAD"))
 	private static void bppResetLocalCtx(CallbackInfo info) {
 		nextLoomPatternIndex = 0;
 		loomPatterns = LoomPatternRenderContext.getLoomPatterns();
@@ -66,7 +66,7 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
 	 * Renders Banner++ loom patterns in line with vanilla banner patterns.
 	 */
 	@Inject(
-			method = "method_23802",
+			method = "renderCanvas",
 			at = @At(
 					value = "INVOKE",
 					target = "Ljava/util/List;get(I)Ljava/lang/Object;",
@@ -101,7 +101,7 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
 	/**
 	 * Renders Banner++ loom patterns that occur after all vanilla banner patterns.
 	 */
-	@Inject(method = "method_23802", at = @At("RETURN"))
+	@Inject(method = "renderCanvas", at = @At("RETURN"))
 	private static void bppPatternRenderPost(
 			MatrixStack stack,
 			VertexConsumerProvider provider,

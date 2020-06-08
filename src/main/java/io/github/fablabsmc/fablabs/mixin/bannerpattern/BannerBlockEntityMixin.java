@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
@@ -144,7 +145,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 	 * Read Banner++ data from tag.
 	 */
 	@Inject(method = "fromTag", at = @At("RETURN"))
-	private void readBppPatternData(CompoundTag tag, CallbackInfo info) {
+	private void readBppPatternData(BlockState state, CompoundTag tag, CallbackInfo info) {
 		bannerpp_setLoomPatternTag(tag.getList(LoomPatternContainer.NBT_KEY, 10));
 	}
 }

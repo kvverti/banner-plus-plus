@@ -3,7 +3,12 @@ package io.github.fablabsmc.fablabs.api.bannerpattern.v1;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.util.registry.MutableRegistry;
+import com.mojang.serialization.Lifecycle;
+import io.github.fablabsmc.fablabs.impl.bannerpattern.Bannerpp;
+
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 
 /**
@@ -11,9 +16,13 @@ import net.minecraft.util.registry.SimpleRegistry;
  */
 public final class LoomPatterns {
 	/**
+	 * The registry key for custom banner patterns, called Loom Patterns.
+	 */
+	public static final RegistryKey<Registry<LoomPattern>> REGISTRY_KEY = RegistryKey.ofRegistry(new Identifier(Bannerpp.MODID, "loom_patterns"));
+	/**
 	 * The registry for custom banner patterns, called Loom Patterns.
 	 */
-	public static final MutableRegistry<LoomPattern> REGISTRY = new SimpleRegistry<>();
+	public static final Registry<LoomPattern> REGISTRY = new SimpleRegistry<>(REGISTRY_KEY, Lifecycle.stable());
 
 	private static final List<LoomPattern> nonSpecialPatterns = new ArrayList<>();
 	private static final List<LoomPattern> specialPatterns = new ArrayList<>();
