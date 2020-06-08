@@ -18,6 +18,6 @@ public final class Bannerpp implements ModInitializer {
 		// Mojang's root registry does not type check
 		MutableRegistry root = RegistryAccessor.getRoot();
 		root.add(LoomPatterns.REGISTRY_KEY, LoomPatterns.REGISTRY);
-		RegistryIdRemapCallback.event(LoomPatterns.REGISTRY).register(state -> LoomPatterns.remapLoomIndices());
+		RegistryIdRemapCallback.event(LoomPatterns.REGISTRY).register(state -> LoomPatternsInternal.remapLoomIndices());
 	}
 }

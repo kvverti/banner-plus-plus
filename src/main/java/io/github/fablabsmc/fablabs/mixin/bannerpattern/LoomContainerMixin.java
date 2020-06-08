@@ -4,6 +4,7 @@ import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPattern;
 import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPatternItem;
 import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPatterns;
 import io.github.fablabsmc.fablabs.api.bannerpattern.v1.PatternLimitModifier;
+import io.github.fablabsmc.fablabs.impl.bannerpattern.LoomPatternsInternal;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.iface.LoomPatternContainer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -81,7 +82,7 @@ public abstract class LoomContainerMixin extends ScreenHandler {
 	private void selectBppLoomPatternOnClick(PlayerEntity entity, int clicked, CallbackInfoReturnable<Boolean> info) {
 		int vanillaCount = BannerPattern.LOOM_APPLICABLE_COUNT;
 
-		if (clicked > vanillaCount && clicked - (1 + vanillaCount) < LoomPatterns.dyeLoomPatternCount()) {
+		if (clicked > vanillaCount && clicked - (1 + vanillaCount) < LoomPatternsInternal.dyeLoomPatternCount()) {
 			selectedPattern.set(-clicked);
 			this.updateOutputSlot();
 			info.setReturnValue(true);
@@ -168,11 +169,11 @@ public abstract class LoomContainerMixin extends ScreenHandler {
 
 			if (!overfull) {
 				LoomPattern pattern = ((LoomPatternItem) patternStack.getItem()).getPattern();
-				this.selectedPattern.set(-LoomPatterns.getLoomIndex(pattern) - (1 + BannerPattern.LOOM_APPLICABLE_COUNT));
+				this.selectedPattern.set(-LoomPatternsInternal.getLoomIndex(pattern) - (1 + BannerPattern.LOOM_APPLICABLE_COUNT));
 			} else {
 				this.selectedPattern.set(0);
 			}
-		} else if (-this.selectedPattern.get() - (1 + BannerPattern.LOOM_APPLICABLE_COUNT) >= LoomPatterns.dyeLoomPatternCount()) {
+		} else if (-this.selectedPattern.get() - (1 + BannerPattern.LOOM_APPLICABLE_COUNT) >= LoomPatternsInternal.dyeLoomPatternCount()) {
 			// reset special loom pattern on removal
 			this.selectedPattern.set(0);
 			this.outputSlot.setStack(ItemStack.EMPTY);
@@ -191,8 +192,8 @@ public abstract class LoomContainerMixin extends ScreenHandler {
 		if (this.selectedPattern.get() < 0 && !bannerStack.isEmpty() && !dyeStack.isEmpty()) {
 			int rawId = -this.selectedPattern.get() - (1 + BannerPattern.LOOM_APPLICABLE_COUNT);
 
-			if (rawId < LoomPatterns.totalLoomPatternCount()) {
-				LoomPattern pattern = LoomPatterns.byLoomIndex(rawId);
+			if (rawId < LoomPatternsInternal.totalLoomPatternCount()) {
+				LoomPattern pattern = LoomPatternsInternal.byLoomIndex(rawId);
 				DyeColor color = ((DyeItem) dyeStack.getItem()).getColor();
 				ItemStack output = bannerStack.copy();
 				output.setCount(1);

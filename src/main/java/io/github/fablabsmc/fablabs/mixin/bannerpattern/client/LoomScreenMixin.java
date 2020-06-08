@@ -10,6 +10,7 @@ import io.github.fablabsmc.fablabs.api.bannerpattern.v1.PatternLimitModifier;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.LoomPatternConversions;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.LoomPatternData;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.LoomPatternRenderContext;
+import io.github.fablabsmc.fablabs.impl.bannerpattern.LoomPatternsInternal;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.iface.LoomPatternContainer;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -62,7 +63,7 @@ public abstract class LoomScreenMixin extends HandledScreen<LoomScreenHandler> {
 			)
 	)
 	private static int takeBppIntoAccountForRowCount() {
-		return BannerPattern.COUNT + LoomPatterns.dyeLoomPatternCount();
+		return BannerPattern.COUNT + LoomPatternsInternal.dyeLoomPatternCount();
 	}
 
 	/**
@@ -77,7 +78,7 @@ public abstract class LoomScreenMixin extends HandledScreen<LoomScreenHandler> {
 			)
 	)
 	private int modifyDyePatternCount() {
-		return BannerPattern.COUNT + LoomPatterns.dyeLoomPatternCount();
+		return BannerPattern.COUNT + LoomPatternsInternal.dyeLoomPatternCount();
 	}
 
 	@Redirect(
@@ -172,7 +173,7 @@ public abstract class LoomScreenMixin extends HandledScreen<LoomScreenHandler> {
 
 		if (loomPatternIndex < 0) {
 			int loomPatternIdx = -loomPatternIndex - (1 + BannerPattern.LOOM_APPLICABLE_COUNT);
-			LoomPattern pattern = LoomPatterns.byLoomIndex(loomPatternIdx);
+			LoomPattern pattern = LoomPatternsInternal.byLoomIndex(loomPatternIdx);
 			ListTag loomPatterns = new ListTag();
 			CompoundTag patternTag = new CompoundTag();
 			patternTag.putString("Pattern", LoomPatterns.REGISTRY.getId(pattern).toString());
