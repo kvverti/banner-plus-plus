@@ -1,63 +1,43 @@
+
 plugins {
-	id "java"
-	id "eclipse"
-	id "idea"
-	id "fabric-loom" version "0.2.7-SNAPSHOT"
-	id "maven-publish"
+	id 'fabric-loom' version '0.2.7-SNAPSHOT'
+	id 'maven-publish'
+	id "com.jfrog.artifactory" version "4.9.0"
 	id "checkstyle"
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+repositories {
+	maven {
+		url 'https://jitpack.io'
+	}
+}
 
-// Elytra version format - notes branch, commit count, and dirty in version string
-def branch
-if (System.env.BRANCH_NAME) {
-	// CI support
-	branch = System.env.BRANCH_NAME
-	branch = branch.substring(branch.lastIndexOf("/")+1)
-} else {
-	branch = "git rev-parse --abbrev-ref HEAD".execute().in.text.trim()
-}
-if (branch == "HEAD") {
-	branch = "git rev-parse --short HEAD".execute().in.text.trim()
-}
-def commits
-if (System.env.RUN_COUNT) {
-	//CI support, for some reason github actions doesn't like getting the rev-list count
-	commits = System.env.RUN_COUNT
-} else {
-	commits = "git rev-list --count HEAD".execute().in.text.trim()
-}
-def dirty = !"git diff-index HEAD".execute().in.text.trim().isEmpty()
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
-def libName = "${project.library_name}"
-def libVer = "${project.library_version}"
-archivesBaseName = "fablabs-" + libName + "-v" + libVer
-group = "${project.maven_group}"
-version = branch + "-${project.mod_version}" + "." + commits + (dirty ? "-dirty" : "") + "+${project.minecraft_version}"
-def modVersion = "${project.mod_version}" + "-" + commits + "+${project.minecraft_version}" // semver-compatible version string for use in fabric.mod.json
-def modRepo
-if (System.env.REPO_NAME) {
-	modRepo = System.env.REPO_NAME
-} else {
-	modRepo = "FabLabsMC/${project.library_name}"
+if(rootProject.file('private.gradle').exists()) { //Publishing details
+	apply from: 'private.gradle'
 }
+
+archivesBaseName = project.archives_base_name
+version = "${project.mod_version}+mc.${project.minecraft_version}"
+group = project.maven_group
 
 minecraft {
 }
 
-repositories {
-	mavenCentral()
-	maven { url "http://maven.fabricmc.net/" } // Fabric maven - home of Fabric API and ModMenu
-}
-
 dependencies {
+	//to change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_build}:v2"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	// compileOnly "com.google.code.findbugs:jsr305:3.0.2" //TODO: what are we going to do for annotations?
+
+	// Fabric API. This is technically optional, but you probably want it anyway.
+	modCompileOnly "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modRuntime "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
+	// You may need to force-disable transitiveness on them.
 }
 
 checkstyle {
@@ -65,43 +45,22 @@ checkstyle {
 	toolVersion = '8.31'
 }
 
-javadoc {
-	options {
-		source = "8"
-		encoding = 'UTF-8'
-		charSet = 'UTF-8'
-		memberLevel = JavadocMemberLevel.PACKAGE
-		links(
-				"https://maven.fabricmc.net/docs/fabric-api-${project.fabric_version}/",
-				"https://maven.fabricmc.net/docs/yarn-${project.yarn_build}/",
-				'https://guava.dev/releases/21.0/api/docs/',
-				'https://asm.ow2.io/javadoc/',
-				'https://docs.oracle.com/javase/8/docs/api/',
-				'https://logging.apache.org/log4j/2.x/log4j-api/apidocs/'
-				// Need to add minecraft jd publication etc once there is one available
-		)
-		// Disable the crazy super-strict doclint tool in Java 8
-		addStringOption('Xdoclint:none', '-quiet')
-	}
-	source sourceSets.main.allJava.srcDirs
-	classpath = sourceSets.main.compileClasspath
-	include("**/api/**")
-	failOnError false
-}
-
 processResources {
-	inputs.property "version", modVersion
-	inputs.property "id", project.archivesBaseName
-	inputs.property "repo", modRepo
-	inputs.property "libname", libName
-	inputs.property "libver", libVer
+	inputs.property "version", project.version
+	exclude "**/*.xcf"
+
 	from(sourceSets.main.resources.srcDirs) {
 		include "fabric.mod.json"
-		expand version: modVersion, id: project.archivesBaseName, repo: modRepo, libname: libName, libver: libVer
+		expand "version": project.version
 	}
+
 	from(sourceSets.main.resources.srcDirs) {
 		exclude "fabric.mod.json"
 	}
+}
+
+runClient {
+	jvmArgs = ["-ea:io.github.kvverti..."]
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
@@ -117,43 +76,66 @@ tasks.withType(JavaCompile) {
 task sourcesJar(type: Jar, dependsOn: classes) {
 	classifier = "sources"
 	from sourceSets.main.allSource
+	exclude "**/*.xcf"
 }
 
-task javadocsJar(type: Jar, dependsOn: javadoc) {
-	classifier = "javadocs"
-	from javadoc.destinationDir
-}
-
-tasks.withType(Jar) {
+jar {
 	from "LICENSE"
 }
 
-assemble.dependsOn javadocsJar
-
 // configure the maven publication
 publishing {
-	repositories {
-		maven {
-			name = "GitHubPackages"
-			url = uri("https://maven.pkg.github.com/" + modRepo.toLowerCase())
-			credentials {
-				username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-				password = project.findProperty("gpr.key") ?: System.getenv("PASSWORD")
-			}
-		}
-		// uncomment to publish to the local maven
-		// mavenLocal()
-	}
 	publications {
-		mavenJava(MavenPublication) {
+		maven(MavenPublication) {
 			// add all the jars that should be included when publishing to maven
-			artifact(remapJar) {
+			//artifact(jar) {
+			//	builtBy remapJar
+			//}
+			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar") { //release jar - file location not provided anywhere in loom
+				classifier null
 				builtBy remapJar
 			}
+
+			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}-dev.jar") { //release jar - file location not provided anywhere in loom
+				classifier "dev"
+				builtBy remapJar
+			}
+
 			artifact(sourcesJar) {
 				builtBy remapSourcesJar
 			}
-			artifact javadocsJar
 		}
+	}
+
+	// select the repositories you want to publish to
+	repositories {
+		// uncomment to publish to the local maven
+		// mavenLocal()
+	}
+}
+
+artifactory {
+	if (project.hasProperty("artifactoryUsername")) {
+		contextUrl = "http://server.bbkr.space:8081/artifactory/"
+		publish {
+			repository {
+				if (version.contains("SNAPSHOT")) {
+					repoKey = "libs-snapshot"
+				} else {
+					repoKey = "libs-release"
+				}
+
+				username = artifactoryUsername
+				password = artifactoryPassword
+			}
+			defaults {
+				publications("maven")
+
+				publishArtifacts = true
+				publishPom = true
+			}
+		}
+	} else {
+		println "Cannot configure artifactory; please define ext.artifactoryUsername and ext.artifactoryPassword before running artifactoryPublish"
 	}
 }
