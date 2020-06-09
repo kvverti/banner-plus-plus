@@ -45,9 +45,12 @@ public final class LoomPatternConversions {
 			for (Tag t : tag) {
 				CompoundTag patternTag = (CompoundTag) t;
 				LoomPattern pattern = LoomPatterns.REGISTRY.get(new Identifier(patternTag.getString("Pattern")));
-				DyeColor color = DyeColor.byId(patternTag.getInt("Color"));
-				int index = patternTag.getInt("Index");
-				res.add(new LoomPatternData(pattern, color, index));
+
+				if (pattern != null) {
+					DyeColor color = DyeColor.byId(patternTag.getInt("Color"));
+					int index = patternTag.getInt("Index");
+					res.add(new LoomPatternData(pattern, color, index));
+				}
 			}
 		}
 
