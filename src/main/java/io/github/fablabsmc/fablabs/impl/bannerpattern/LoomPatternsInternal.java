@@ -71,11 +71,19 @@ public final class LoomPatternsInternal {
 		specialPatterns.clear();
 
 		for (LoomPattern p : LoomPatterns.REGISTRY) {
-			if (!p.isSpecial()) {
-				nonSpecialPatterns.add(p);
-			} else {
-				specialPatterns.add(p);
-			}
+			addPattern(p);
+		}
+	}
+
+	/**
+	 * Adds a single loom pattern to the loom pattern index. Called in the registry entry addition callback,
+	 * so patterns are guaranteed to be added in raw ID order.
+	 */
+	static void addPattern(LoomPattern pattern) {
+		if (!pattern.isSpecial()) {
+			nonSpecialPatterns.add(pattern);
+		} else {
+			specialPatterns.add(pattern);
 		}
 	}
 }

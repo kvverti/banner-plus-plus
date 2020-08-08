@@ -196,7 +196,7 @@ public abstract class LoomScreenMixin extends HandledScreen<LoomScreenHandler> {
 			method = "drawBackground",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/render/block/entity/BannerBlockEntityRenderer;renderCanvas(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/util/SpriteIdentifier;ZLjava/util/List;)V"
+					target = "Lnet/minecraft/client/render/block/entity/BannerBlockEntityRenderer;method_29999(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/util/SpriteIdentifier;ZLjava/util/List;)V"
 			)
 	)
 	private void setEmptyBppPattern(CallbackInfo info) {

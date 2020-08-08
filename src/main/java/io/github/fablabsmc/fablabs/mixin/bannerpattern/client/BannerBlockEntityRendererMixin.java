@@ -84,6 +84,7 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
 			SpriteIdentifier spriteId,
 			boolean notShield,
 			List<Pair<BannerPattern, DyeColor>> list,
+			boolean glint,
 			CallbackInfo info,
 			int idx) {
 		while (nextLoomPatternIndex < loomPatterns.size()) {
@@ -111,6 +112,7 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
 			SpriteIdentifier spriteId,
 			boolean notShield,
 			List<Pair<BannerPattern, DyeColor>> list,
+			boolean glint,
 			CallbackInfo info) {
 		for (int i = nextLoomPatternIndex; i < loomPatterns.size(); i++) {
 			renderBppLoomPattern(loomPatterns.get(i), stack, provider, part, haha, no, notShield);

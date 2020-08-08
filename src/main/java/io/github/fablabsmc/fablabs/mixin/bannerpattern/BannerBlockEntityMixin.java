@@ -54,7 +54,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 				int colorId = element.getInt("Color");
 				int index = element.getInt("Index");
 
-				if (id == null || !LoomPatterns.REGISTRY.containsId(id)) {
+				if (id == null || !LoomPatterns.REGISTRY.getIds().contains(id)) {
 					itr.remove();
 				} else {
 					int rtColorId = DyeColor.byId(colorId).getId();
