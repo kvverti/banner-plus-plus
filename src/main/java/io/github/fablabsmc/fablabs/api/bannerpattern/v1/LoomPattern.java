@@ -14,16 +14,28 @@ public class LoomPattern {
 	}
 
 	/**
-	 * Whether this loom pattern requres an item in the pattern slot.
+	 * Whether this loom pattern requires an item in the pattern slot.
 	 */
 	public boolean isSpecial() {
 		return special;
 	}
 
 	/**
-	 * Returns the sprite ID for the pattern mask texture for this LoomPattern.
+	 * @param type Context where this pattern is applied, e.g. <code>shield</code> or <code>banner</code>.
+	 * @return the sprite ID for the pattern mask texture for this LoomPattern.
+	 * @throws NullPointerException if this {@code LoomPattern} has not yet been registered.
 	 */
+	public Identifier getSpriteId(String type) {
+		Identifier myId = LoomPatterns.REGISTRY.getId(this);
+		return new Identifier(myId.getNamespace(), "pattern/" + type + "/" + myId.getPath());
+	}
+
+	/**
+	 * @deprecated Acquire a {@link LoomPattern} instance and call {@link #getSpriteId(String)} directly.
+	 * @throws NullPointerException if {@code patternId} does not refer to a registered LoomPattern.
+	 */
+	@Deprecated
 	public static Identifier getSpriteId(Identifier patternId, String namespace) {
-		return new Identifier(patternId.getNamespace(), "pattern/" + namespace + "/" + patternId.getPath());
+		return LoomPatterns.REGISTRY.get(patternId).getSpriteId(namespace);
 	}
 }
