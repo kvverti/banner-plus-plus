@@ -31,4 +31,6 @@ Registry.register(Registry.ITEM, new Identifier("modid", "my_pattern_item"), new
 
 ## Resouce Keys
 
-Loom pattern textures are stored under `modid:textures/pattern/banner/my_pattern.png` and `modid:textures/pattern/shield/my_pattern.png`. Language keys have the form `bannerpp.pattern.modid.my_pattern`.
+By default, Loom pattern textures are stored under `modid:textures/pattern/banner/my_pattern.png` and `modid:textures/pattern/shield/my_pattern.png`.
+
+By default, language keys have the form `bannerpp.pattern.modid.my_pattern`.
