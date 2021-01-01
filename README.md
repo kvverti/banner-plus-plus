@@ -7,7 +7,7 @@ To depend on Banner++, add the following to your `build.gradle` repository block
 ```groovy
 repositories {
 	maven {
-		url 'http://server.bbkr.space:8081/artifactory/libs-release'
+		url 'https://server.bbkr.space/artifactory/libs-release/'
 	}
 }
 ```
