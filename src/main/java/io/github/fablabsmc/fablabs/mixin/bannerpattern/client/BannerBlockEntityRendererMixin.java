@@ -130,7 +130,7 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
 			int haha,
 			int no,
 			boolean notShield) {
-		Identifier spriteId = LoomPattern.getSpriteId(LoomPatterns.REGISTRY.getId(data.pattern), notShield ? "banner" : "shield");
+		Identifier spriteId = data.pattern.getSpriteId(notShield ? "banner": "shield");
 		SpriteIdentifier realSpriteId = new SpriteIdentifier(notShield ? TexturedRenderLayers.BANNER_PATTERNS_ATLAS_TEXTURE : TexturedRenderLayers.SHIELD_PATTERNS_ATLAS_TEXTURE, spriteId);
 		float[] color = data.color.getColorComponents();
 		part.render(stack, realSpriteId.getVertexConsumer(provider, RenderLayer::getEntityNoOutline), haha, no, color[0], color[1], color[2], 1.0f);

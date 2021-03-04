@@ -14,14 +14,14 @@ public class BannerppClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		ClientSpriteRegistryCallback.event(TexturedRenderLayers.BANNER_PATTERNS_ATLAS_TEXTURE)
 				.register((texture, registry) -> {
-					for (Identifier id : LoomPatterns.REGISTRY.getIds()) {
-						registry.register(LoomPattern.getSpriteId(id, "banner"));
+					for (LoomPattern pattern : LoomPatterns.REGISTRY) {
+						registry.register(pattern.getSpriteId("banner"));
 					}
 				});
 		ClientSpriteRegistryCallback.event(TexturedRenderLayers.SHIELD_PATTERNS_ATLAS_TEXTURE)
 				.register((texture, registry) -> {
-					for (Identifier id : LoomPatterns.REGISTRY.getIds()) {
-						registry.register(LoomPattern.getSpriteId(id, "shield"));
+					for (LoomPattern pattern : LoomPatterns.REGISTRY) {
+						registry.register(pattern.getSpriteId("shield"));
 					}
 				});
 	}

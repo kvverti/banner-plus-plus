@@ -2,7 +2,10 @@ package io.github.fablabsmc.fablabs.mixin.bannerpattern.client;
 
 import java.util.List;
 
+import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPattern;
+import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPatterns;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.iface.LoomPatternContainer;
+import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -95,11 +98,13 @@ public abstract class BannerItemMixin extends WallStandingBlockItem {
 
 	@Unique
 	private static void addLoomPatternLine(CompoundTag data, List<Text> lines) {
-		String id = data.getString("Pattern");
-		int sepIdx = id.indexOf(':');
-		String color = DyeColor.byId(data.getInt("Color")).getName();
-		lines.add(new TranslatableText(
-				"bannerpp.pattern." + id.substring(0, sepIdx) + "." + id.substring(sepIdx + 1) + "." + color)
-				.formatted(Formatting.GRAY));
+		Identifier id = Identifier.tryParse(data.getString("Pattern"));
+		DyeColor color = DyeColor.byId(data.getInt("Color"));
+		if (id != null) {
+			LoomPattern pattern = LoomPatterns.REGISTRY.get(id);
+			if (pattern != null) {
+				pattern.addPatternLine(lines, color);
+			}
+		}
 	}
 }
