@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import com.mojang.datafixers.util.Pair;
-import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPattern;
-import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPatterns;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.LoomPatternData;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.LoomPatternRenderContext;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.iface.LoomPatternContainer;
@@ -130,7 +128,7 @@ public abstract class BannerBlockEntityRendererMixin extends BlockEntityRenderer
 			int haha,
 			int no,
 			boolean notShield) {
-		Identifier spriteId = data.pattern.getSpriteId(notShield ? "banner": "shield");
+		Identifier spriteId = data.pattern.getSpriteId(notShield ? "banner" : "shield");
 		SpriteIdentifier realSpriteId = new SpriteIdentifier(notShield ? TexturedRenderLayers.BANNER_PATTERNS_ATLAS_TEXTURE : TexturedRenderLayers.SHIELD_PATTERNS_ATLAS_TEXTURE, spriteId);
 		float[] color = data.color.getColorComponents();
 		part.render(stack, realSpriteId.getVertexConsumer(provider, RenderLayer::getEntityNoOutline), haha, no, color[0], color[1], color[2], 1.0f);

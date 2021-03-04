@@ -4,7 +4,6 @@ import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPattern;
 import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPatterns;
 
 import net.minecraft.client.render.TexturedRenderLayers;
-import net.minecraft.util.Identifier;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
