@@ -7,6 +7,7 @@ import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPattern;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.iface.LoomPatternContainer;
 
 import net.minecraft.loot.function.CopyNbtLootFunction;
+import net.minecraft.loot.provider.nbt.ContextLootNbtProvider;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -59,7 +60,7 @@ public final class Bannerpp implements ModInitializer {
 		LootTableLoadingCallback.EVENT.register((resourceManager, lootManager, lootTableId, supplier, setter) -> {
 			if (BANNER_LOOT_TABLES.contains(lootTableId)) {
 				supplier.withFunction(CopyNbtLootFunction
-						.builder(CopyNbtLootFunction.Source.BLOCK_ENTITY)
+						.builder(ContextLootNbtProvider.BLOCK_ENTITY)
 						.withOperation(LoomPatternContainer.NBT_KEY, "BlockEntityTag." + LoomPatternContainer.NBT_KEY)
 						.build()
 				);

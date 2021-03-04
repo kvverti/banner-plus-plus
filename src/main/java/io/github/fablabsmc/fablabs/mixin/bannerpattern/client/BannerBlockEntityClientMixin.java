@@ -19,6 +19,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.math.BlockPos;
 
 @Mixin(BannerBlockEntity.class)
 public abstract class BannerBlockEntityClientMixin extends BlockEntity implements LoomPatternContainer {
@@ -31,7 +32,7 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
 	private List<LoomPatternData> loomPatterns = Collections.emptyList();
 
 	private BannerBlockEntityClientMixin() {
-		super(null);
+		super(null, BlockPos.ORIGIN, null);
 	}
 
 	@Override

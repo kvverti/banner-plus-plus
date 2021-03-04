@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
@@ -22,6 +21,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * Adds loom pattern data fields to the banner block entity.
@@ -34,7 +34,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 	private ListTag loomPatternsTag = new ListTag();
 
 	private BannerBlockEntityMixin() {
-		super(null);
+		super(null, BlockPos.ORIGIN, null);
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 	/**
 	 * Write Banner++ data to tag.
 	 */
-	@Inject(method = "toTag", at = @At("RETURN"))
+	@Inject(method = "writeNbt", at = @At("RETURN"))
 	private void addBppPatternData(CallbackInfoReturnable<CompoundTag> info) {
 		CompoundTag tag = info.getReturnValue();
 
@@ -144,8 +144,8 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 	/**
 	 * Read Banner++ data from tag.
 	 */
-	@Inject(method = "fromTag", at = @At("RETURN"))
-	private void readBppPatternData(BlockState state, CompoundTag tag, CallbackInfo info) {
+	@Inject(method = "readNbt", at = @At("RETURN"))
+	private void readBppPatternData(CompoundTag tag, CallbackInfo info) {
 		bannerpp_setLoomPatternTag(tag.getList(LoomPatternContainer.NBT_KEY, 10));
 	}
 }
