@@ -5,8 +5,7 @@
   "mixins": [
     "BannerBlockEntityMixin",
     "LoomContainerMixin",
-    "LoomContainerPatternSlotMixin",
-    "RegistryAccessor"
+    "LoomContainerPatternSlotMixin"
   ],
   "client": [
     "client.BannerBlockEntityClientMixin",
