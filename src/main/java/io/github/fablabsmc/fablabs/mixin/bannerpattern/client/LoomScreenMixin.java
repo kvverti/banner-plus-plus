@@ -27,12 +27,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.LoomScreen;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.LoomScreenHandler;
 import net.minecraft.util.DyeColor;
 
@@ -115,7 +116,7 @@ public abstract class LoomScreenMixin extends HandledScreen<LoomScreenHandler> {
 	)
 	private void addBppLoomPatternsToFullCond(CallbackInfo info) {
 		ItemStack banner = (this.handler).getBannerSlot().getStack();
-		int patternLimit = PatternLimitModifier.EVENT.invoker().computePatternLimit(6, this.playerInventory.player);
+		int patternLimit = PatternLimitModifier.EVENT.invoker().computePatternLimit(6, MinecraftClient.getInstance().player);
 		this.hasTooManyPatterns |= BannerBlockEntity.getPatternCount(banner) >= patternLimit;
 	}
 
@@ -123,8 +124,8 @@ public abstract class LoomScreenMixin extends HandledScreen<LoomScreenHandler> {
 	private void saveLoomPatterns(CallbackInfo info) {
 		if (this.bannerPatterns != null) {
 			ItemStack banner = (this.handler).getOutputSlot().getStack();
-			ListTag tag = LoomPatternConversions.getLoomPatternTag(banner);
-			loomPatterns = LoomPatternConversions.makeLoomPatternData(tag);
+			NbtList ls = LoomPatternConversions.getLoomPatternTag(banner);
+			loomPatterns = LoomPatternConversions.makeLoomPatternData(ls);
 		} else {
 			loomPatterns = Collections.emptyList();
 		}
@@ -164,32 +165,32 @@ public abstract class LoomScreenMixin extends HandledScreen<LoomScreenHandler> {
 			method = "method_22692",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/nbt/CompoundTag;put(Ljava/lang/String;Lnet/minecraft/nbt/Tag;)Lnet/minecraft/nbt/Tag;",
+					target = "Lnet/minecraft/nbt/NbtCompound;put(Ljava/lang/String;Lnet/minecraft/nbt/NbtElement;)Lnet/minecraft/nbt/NbtElement;",
 					ordinal = 0
 			)
 	)
-	private Tag proxyPutPatterns(CompoundTag tag, String key, Tag patterns) {
+	private NbtElement proxyPutPatterns(NbtCompound nbt, String key, NbtElement patterns) {
 		singleBppPattern.clear();
 
 		if (loomPatternIndex < 0) {
 			int loomPatternIdx = -loomPatternIndex - (1 + BannerPattern.LOOM_APPLICABLE_COUNT);
 			LoomPattern pattern = LoomPatternsInternal.byLoomIndex(loomPatternIdx);
-			ListTag loomPatterns = new ListTag();
-			CompoundTag patternTag = new CompoundTag();
-			patternTag.putString("Pattern", LoomPatterns.REGISTRY.getId(pattern).toString());
-			patternTag.putInt("Color", 0);
-			patternTag.putInt("Index", 1);
-			loomPatterns.add(patternTag);
+			NbtList loomPatterns = new NbtList();
+			NbtCompound patternNbtElement = new NbtCompound();
+			patternNbtElement.putString("Pattern", LoomPatterns.REGISTRY.getId(pattern).toString());
+			patternNbtElement.putInt("Color", 0);
+			patternNbtElement.putInt("Index", 1);
+			loomPatterns.add(patternNbtElement);
 			// pop dummy vanilla banner pattern
-			ListTag vanillaPatterns = (ListTag) patterns;
+			NbtList vanillaPatterns = (NbtList) patterns;
 			assert vanillaPatterns.size() == 2 : vanillaPatterns.size();
 			vanillaPatterns.remove(1);
-			tag.put(LoomPatternContainer.NBT_KEY, loomPatterns);
+			nbt.put(LoomPatternContainer.NBT_KEY, loomPatterns);
 			singleBppPattern.add(new LoomPatternData(pattern, DyeColor.WHITE, 1));
 		}
 
 		LoomPatternRenderContext.setLoomPatterns(singleBppPattern);
-		return tag.put(key, patterns);
+		return nbt.put(key, patterns);
 	}
 
 	@Inject(

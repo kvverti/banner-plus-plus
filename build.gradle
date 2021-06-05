@@ -1,8 +1,8 @@
 
 plugins {
-	id 'fabric-loom' version '0.5-SNAPSHOT'
+	id 'fabric-loom' version '0.8-SNAPSHOT'
 	id 'maven-publish'
-	id "com.jfrog.artifactory" version "4.9.0"
+	id "com.jfrog.artifactory" version "4.21.0"
 	id "checkstyle"
 }
 
@@ -12,8 +12,8 @@ repositories {
 	}
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 if(rootProject.file('private.gradle').exists()) { //Publishing details
 	apply from: 'private.gradle'
@@ -49,18 +49,13 @@ processResources {
 	inputs.property "version", project.version
 	exclude "**/*.xcf"
 
-	from(sourceSets.main.resources.srcDirs) {
-		include "fabric.mod.json"
+	filesMatching("fabric.mod.json") {
 		expand "version": project.version
-	}
-
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "fabric.mod.json"
 	}
 }
 
 runClient {
-	jvmArgs = ["-ea:io.github.kvverti..."]
+	jvmArgs = ["-ea:io.github.fablabsmc.fablabs..."]
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is

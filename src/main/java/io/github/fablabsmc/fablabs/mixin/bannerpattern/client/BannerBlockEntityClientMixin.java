@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
 
@@ -38,7 +38,7 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
 	@Override
 	public List<LoomPatternData> bannerpp_getLoomPatterns() {
 		if (this.patterns == null && this.patternListTagRead) {
-			ListTag tag = ((LoomPatternContainer.Internal) this).bannerpp_getLoomPatternTag();
+			NbtList tag = ((LoomPatternContainer.Internal) this).bannerpp_getLoomPatternTag();
 			loomPatterns = LoomPatternConversions.makeLoomPatternData(tag);
 		}
 
@@ -59,7 +59,7 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
 	@Inject(method = "getPickStack", at = @At("RETURN"))
 	private void putBppPatternsInPickStack(CallbackInfoReturnable<ItemStack> info) {
 		ItemStack stack = info.getReturnValue();
-		ListTag tag = ((Internal) this).bannerpp_getLoomPatternTag();
+		NbtList tag = ((Internal) this).bannerpp_getLoomPatternTag();
 
 		if (tag != null) {
 			stack.getOrCreateSubTag("BlockEntityTag")

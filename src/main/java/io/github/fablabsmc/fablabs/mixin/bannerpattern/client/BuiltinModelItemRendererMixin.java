@@ -12,7 +12,7 @@ import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtList;
 
 /**
  * Sets loom pattern context for shield rendering.
@@ -27,7 +27,7 @@ public abstract class BuiltinModelItemRendererMixin {
 			)
 	)
 	private void setBppLoomPatterns(ItemStack itemStack, ModelTransformation.Mode mode, MatrixStack matrixStack, VertexConsumerProvider provider, int i, int j, CallbackInfo info) {
-		ListTag tag = LoomPatternConversions.getLoomPatternTag(itemStack);
+		NbtList tag = LoomPatternConversions.getLoomPatternTag(itemStack);
 		LoomPatternRenderContext.setLoomPatterns(LoomPatternConversions.makeLoomPatternData(tag));
 	}
 }

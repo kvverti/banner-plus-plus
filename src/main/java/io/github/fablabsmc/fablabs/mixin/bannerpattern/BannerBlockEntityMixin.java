@@ -16,9 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -31,25 +31,25 @@ import net.minecraft.util.math.BlockPos;
 @Mixin(BannerBlockEntity.class)
 public abstract class BannerBlockEntityMixin extends BlockEntity implements LoomPatternContainer.Internal {
 	@Unique
-	private ListTag loomPatternsTag = new ListTag();
+	private NbtList loomPatternsTag = new NbtList();
 
 	private BannerBlockEntityMixin() {
 		super(null, BlockPos.ORIGIN, null);
 	}
 
 	@Override
-	public ListTag bannerpp_getLoomPatternTag() {
+	public NbtList bannerpp_getLoomPatternTag() {
 		return loomPatternsTag;
 	}
 
 	@Override
-	public void bannerpp_setLoomPatternTag(ListTag tag) {
+	public void bannerpp_setLoomPatternTag(NbtList tag) {
 		loomPatternsTag = tag;
 
 		if (loomPatternsTag != null) {
 			// validate NBT data, removing and/or resetting invalid data
-			for (Iterator<Tag> itr = loomPatternsTag.iterator(); itr.hasNext(); ) {
-				CompoundTag element = (CompoundTag) itr.next();
+			for (Iterator<NbtElement> itr = loomPatternsTag.iterator(); itr.hasNext(); ) {
+				NbtCompound element = (NbtCompound) itr.next();
 				Identifier id = Identifier.tryParse(element.getString("Pattern"));
 				int colorId = element.getInt("Color");
 				int index = element.getInt("Index");
@@ -70,7 +70,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 			}
 
 			// the Java API requires that this sort be stable
-			loomPatternsTag.sort(comparingInt(t -> ((CompoundTag) t).getInt("Index")));
+			loomPatternsTag.sort(comparingInt(t -> ((NbtCompound) t).getInt("Index")));
 		}
 	}
 
@@ -79,7 +79,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 	 */
 	@Inject(method = "getPatternCount", at = @At("RETURN"), cancellable = true)
 	private static void modifyPatternCount(ItemStack stack, CallbackInfoReturnable<Integer> info) {
-		CompoundTag beTag = stack.getSubTag("BlockEntityTag");
+		NbtCompound beTag = stack.getSubTag("BlockEntityTag");
 
 		if (beTag != null && beTag.contains(LoomPatternContainer.NBT_KEY)) {
 			int count = beTag.getList(LoomPatternContainer.NBT_KEY, 10).size();
@@ -94,11 +94,11 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 	 */
 	@Inject(method = "loadFromItemStack", at = @At("HEAD"), cancellable = true)
 	private static void cleanBppLoomPattern(ItemStack stack, CallbackInfo info) {
-		CompoundTag beTag = stack.getSubTag("BlockEntityTag");
+		NbtCompound beTag = stack.getSubTag("BlockEntityTag");
 
 		if (beTag != null) {
-			ListTag loomPatterns = beTag.getList(LoomPatternContainer.NBT_KEY, 10);
-			ListTag patterns = beTag.getList("Patterns", 10);
+			NbtList loomPatterns = beTag.getList(LoomPatternContainer.NBT_KEY, 10);
+			NbtList patterns = beTag.getList("Patterns", 10);
 			boolean cleaned = false;
 
 			if (!loomPatterns.isEmpty()) {
@@ -133,8 +133,8 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 	 * Write Banner++ data to tag.
 	 */
 	@Inject(method = "writeNbt", at = @At("RETURN"))
-	private void addBppPatternData(CallbackInfoReturnable<CompoundTag> info) {
-		CompoundTag tag = info.getReturnValue();
+	private void addBppPatternData(CallbackInfoReturnable<NbtCompound> info) {
+		NbtCompound tag = info.getReturnValue();
 
 		if (tag != null) {
 			tag.put(LoomPatternContainer.NBT_KEY, loomPatternsTag);
@@ -145,7 +145,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 	 * Read Banner++ data from tag.
 	 */
 	@Inject(method = "readNbt", at = @At("RETURN"))
-	private void readBppPatternData(CompoundTag tag, CallbackInfo info) {
+	private void readBppPatternData(NbtCompound tag, CallbackInfo info) {
 		bannerpp_setLoomPatternTag(tag.getList(LoomPatternContainer.NBT_KEY, 10));
 	}
 }

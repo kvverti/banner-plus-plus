@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.item.BannerItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.WallStandingBlockItem;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -27,7 +27,7 @@ public abstract class BannerItemMixin extends WallStandingBlockItem {
 	}
 
 	@Unique
-	private static ListTag loomPatterns;
+	private static NbtList loomPatterns;
 
 	@Unique
 	private static int nextLoomPatternIndex;
@@ -41,7 +41,7 @@ public abstract class BannerItemMixin extends WallStandingBlockItem {
 	)
 	private static void preAppendBppLoomPatterns(ItemStack stack, List<Text> lines, CallbackInfo info) {
 		nextLoomPatternIndex = 0;
-		CompoundTag beTag = stack.getSubTag("BlockEntityTag");
+		NbtCompound beTag = stack.getSubTag("BlockEntityTag");
 
 		if (beTag != null && beTag.contains(LoomPatternContainer.NBT_KEY)) {
 			loomPatterns = beTag.getList(LoomPatternContainer.NBT_KEY, 10);
@@ -55,7 +55,7 @@ public abstract class BannerItemMixin extends WallStandingBlockItem {
 			method = "appendBannerTooltip",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/nbt/ListTag;getCompound(I)Lnet/minecraft/nbt/CompoundTag;",
+					target = "Lnet/minecraft/nbt/NbtList;getCompound(I)Lnet/minecraft/nbt/NbtCompound;",
 					ordinal = 0
 			)
 	)
@@ -64,7 +64,7 @@ public abstract class BannerItemMixin extends WallStandingBlockItem {
 
 		if (loomPatterns != null) {
 			while (nextLoomPatternIndex < loomPatterns.size()) {
-				CompoundTag data = loomPatterns.getCompound(nextLoomPatternIndex);
+				NbtCompound data = loomPatterns.getCompound(nextLoomPatternIndex);
 
 				if (data.getInt("Index") == nextIndex) {
 					addLoomPatternLine(data, lines);
@@ -85,7 +85,7 @@ public abstract class BannerItemMixin extends WallStandingBlockItem {
 	private static void appendBppLoomPatternsPost(ItemStack stack, List<Text> lines, CallbackInfo info) {
 		if (loomPatterns != null) {
 			for (int i = nextLoomPatternIndex; i < loomPatterns.size(); i++) {
-				CompoundTag data = loomPatterns.getCompound(i);
+				NbtCompound data = loomPatterns.getCompound(i);
 				addLoomPatternLine(data, lines);
 			}
 
@@ -95,7 +95,7 @@ public abstract class BannerItemMixin extends WallStandingBlockItem {
 	}
 
 	@Unique
-	private static void addLoomPatternLine(CompoundTag data, List<Text> lines) {
+	private static void addLoomPatternLine(NbtCompound data, List<Text> lines) {
 		Identifier id = Identifier.tryParse(data.getString("Pattern"));
 		DyeColor color = DyeColor.byId(data.getInt("Color"));
 

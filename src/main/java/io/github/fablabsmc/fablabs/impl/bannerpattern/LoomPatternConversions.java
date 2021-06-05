@@ -8,9 +8,9 @@ import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPatterns;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.iface.LoomPatternContainer;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
@@ -23,8 +23,8 @@ public final class LoomPatternConversions {
 	 *
 	 * @return the loom pattern tag, or null if it is not present.
 	 */
-	public static ListTag getLoomPatternTag(ItemStack stack) {
-		CompoundTag tag = stack.getSubTag("BlockEntityTag");
+	public static NbtList getLoomPatternTag(ItemStack stack) {
+		NbtCompound tag = stack.getSubTag("BlockEntityTag");
 
 		if (tag != null && tag.contains(LoomPatternContainer.NBT_KEY, 9)) {
 			return tag.getList(LoomPatternContainer.NBT_KEY, 10);
@@ -36,14 +36,14 @@ public final class LoomPatternConversions {
 	/**
 	 * Parses the given NBT data into a list of LoomPatternData objects.
 	 *
-	 * @param tag a nullable NBT ListTag with loom pattern data
+	 * @param tag a nullable NbtList with loom pattern data
 	 */
-	public static List<LoomPatternData> makeLoomPatternData(ListTag tag) {
+	public static List<LoomPatternData> makeLoomPatternData(NbtList tag) {
 		List<LoomPatternData> res = new ArrayList<>();
 
 		if (tag != null) {
-			for (Tag t : tag) {
-				CompoundTag patternTag = (CompoundTag) t;
+			for (NbtElement t : tag) {
+				NbtCompound patternTag = (NbtCompound) t;
 				LoomPattern pattern = LoomPatterns.REGISTRY.get(new Identifier(patternTag.getString("Pattern")));
 
 				if (pattern != null) {

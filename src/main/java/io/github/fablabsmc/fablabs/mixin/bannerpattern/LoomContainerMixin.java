@@ -25,8 +25,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.LoomScreenHandler;
 import net.minecraft.screen.Property;
 import net.minecraft.screen.ScreenHandler;
@@ -197,18 +197,18 @@ public abstract class LoomContainerMixin extends ScreenHandler {
 				DyeColor color = ((DyeItem) dyeStack.getItem()).getColor();
 				ItemStack output = bannerStack.copy();
 				output.setCount(1);
-				CompoundTag beTag = output.getOrCreateSubTag("BlockEntityTag");
-				ListTag loomPatterns;
+				NbtCompound beTag = output.getOrCreateSubTag("BlockEntityTag");
+				NbtList loomPatterns;
 
 				if (beTag.contains(LoomPatternContainer.NBT_KEY, 9)) {
 					loomPatterns = beTag.getList(LoomPatternContainer.NBT_KEY, 10);
 				} else {
-					loomPatterns = new ListTag();
+					loomPatterns = new NbtList();
 					beTag.put(LoomPatternContainer.NBT_KEY, loomPatterns);
 				}
 
 				int vanillaPatternCount = beTag.getList("Patterns", 10).size();
-				CompoundTag patternTag = new CompoundTag();
+				NbtCompound patternTag = new NbtCompound();
 				patternTag.putString("Pattern", LoomPatterns.REGISTRY.getId(pattern).toString());
 				patternTag.putInt("Color", color.getId());
 				patternTag.putInt("Index", vanillaPatternCount);
