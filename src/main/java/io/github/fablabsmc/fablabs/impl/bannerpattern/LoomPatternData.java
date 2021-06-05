@@ -10,18 +10,10 @@ import net.minecraft.util.DyeColor;
  * this pattern appears before. This allows Banner++ loom patterns
  * to be used with vanilla banner patterns.
  */
-public final class LoomPatternData {
-	public final LoomPattern pattern;
-	public final DyeColor color;
-	public final int index;
-
-	public LoomPatternData(LoomPattern pattern, DyeColor color, int index) {
+public record LoomPatternData(LoomPattern pattern, DyeColor color, int index) {
+	public LoomPatternData {
 		if (index < 0) {
 			throw new IllegalArgumentException("index: " + index);
 		}
-
-		this.pattern = pattern;
-		this.color = color;
-		this.index = index;
 	}
 }

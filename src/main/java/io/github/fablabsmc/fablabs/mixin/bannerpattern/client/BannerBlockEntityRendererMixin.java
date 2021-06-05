@@ -86,7 +86,7 @@ public abstract class BannerBlockEntityRendererMixin {
 		while (nextLoomPatternIndex < loomPatterns.size()) {
 			LoomPatternData data = loomPatterns.get(nextLoomPatternIndex);
 
-			if (data.index == idx - 1) {
+			if (data.index() == idx - 1) {
 				renderBppLoomPattern(data, stack, provider, canvas, light, overlay, isBanner);
 				nextLoomPatternIndex++;
 			} else {
@@ -129,9 +129,9 @@ public abstract class BannerBlockEntityRendererMixin {
 			int light,
 			int overlay,
 			boolean notShield) {
-		Identifier spriteId = data.pattern.getSpriteId(notShield ? "banner" : "shield");
+		Identifier spriteId = data.pattern().getSpriteId(notShield ? "banner" : "shield");
 		SpriteIdentifier realSpriteId = new SpriteIdentifier(notShield ? TexturedRenderLayers.BANNER_PATTERNS_ATLAS_TEXTURE : TexturedRenderLayers.SHIELD_PATTERNS_ATLAS_TEXTURE, spriteId);
-		float[] color = data.color.getColorComponents();
+		float[] color = data.color().getColorComponents();
 		canvas.render(stack, realSpriteId.getVertexConsumer(provider, RenderLayer::getEntityNoOutline), light, overlay, color[0], color[1], color[2], 1.0f);
 	}
 }
