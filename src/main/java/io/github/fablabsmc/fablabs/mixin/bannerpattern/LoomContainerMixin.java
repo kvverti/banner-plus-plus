@@ -1,7 +1,7 @@
 package io.github.fablabsmc.fablabs.mixin.bannerpattern;
 
 import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPattern;
-import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPatternItem;
+import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPatternProvider;
 import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPatterns;
 import io.github.fablabsmc.fablabs.api.bannerpattern.v1.PatternLimitModifier;
 import io.github.fablabsmc.fablabs.impl.bannerpattern.LoomPatternsInternal;
@@ -164,11 +164,11 @@ public abstract class LoomContainerMixin extends ScreenHandler {
 		ItemStack patternStack = this.patternSlot.getStack();
 
 		// only run for special loom patterns
-		if (!patternStack.isEmpty() && patternStack.getItem() instanceof LoomPatternItem) {
+		if (!patternStack.isEmpty() && patternStack.getItem() instanceof LoomPatternProvider) {
 			boolean overfull = BannerBlockEntity.getPatternCount(banner) >= patternLimit;
 
 			if (!overfull) {
-				LoomPattern pattern = ((LoomPatternItem) patternStack.getItem()).getPattern();
+				LoomPattern pattern = ((LoomPatternProvider) patternStack.getItem()).getPattern();
 				this.selectedPattern.set(-LoomPatternsInternal.getLoomIndex(pattern) - (1 + BannerPattern.LOOM_APPLICABLE_COUNT));
 			} else {
 				this.selectedPattern.set(0);
@@ -248,7 +248,7 @@ public abstract class LoomContainerMixin extends ScreenHandler {
 	private void attemptBppPatternItemTransfer(PlayerEntity player, int slotIdx, CallbackInfoReturnable<ItemStack> info) {
 		ItemStack stack = this.slots.get(slotIdx).getStack();
 
-		if (stack.getItem() instanceof LoomPatternItem) {
+		if (stack.getItem() instanceof LoomPatternProvider) {
 			if (!this.insertItem(stack, this.patternSlot.id, this.patternSlot.id + 1, false)) {
 				info.setReturnValue(ItemStack.EMPTY);
 			}

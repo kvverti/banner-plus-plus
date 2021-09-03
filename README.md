@@ -23,13 +23,14 @@ Registry.register(LoomPatterns.REGISTRY, new Identifier("modid", "my_pattern"), 
 ```
 Normal patterns are those that don't need an item to be placed in the loom in order to select them, while special patterns do need such an item.
 
-Items associated with special patterns are instances of `LoomPatternItem`, the analogue of the vanilla `BannerPatternItem`. Simply register one of these items with each special pattern, and they will automatically be usable in the loom.
+To mark an Item as a pattern item in the Loom, implement the `LoomPatternProvider` interface on the item.
+The `LoomPatternItem` class is a convenience subclass of `Item` that implements this interface.
 
 ```java
 Registry.register(Registry.ITEM, new Identifier("modid", "my_pattern_item"), new LoomPatternItem(MY_PATTERN, itemSettings));
 ```
 
-## Resouce Keys
+## Resource Keys
 
 By default, Loom pattern textures are stored under `modid:textures/pattern/banner/my_pattern.png` and `modid:textures/pattern/shield/my_pattern.png`.
 

@@ -1,6 +1,6 @@
 package io.github.fablabsmc.fablabs.mixin.bannerpattern;
 
-import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPatternItem;
+import io.github.fablabsmc.fablabs.api.bannerpattern.v1.LoomPatternProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,7 +17,7 @@ public abstract class LoomContainerPatternSlotMixin extends Slot {
 
 	@Inject(method = "canInsert(Lnet/minecraft/item/ItemStack;)Z", at = @At("RETURN"), cancellable = true)
 	private void checkBppLoomPatternItem(ItemStack stack, CallbackInfoReturnable<Boolean> info) {
-		if (stack.getItem() instanceof LoomPatternItem) {
+		if (stack.getItem() instanceof LoomPatternProvider) {
 			info.setReturnValue(true);
 		}
 	}

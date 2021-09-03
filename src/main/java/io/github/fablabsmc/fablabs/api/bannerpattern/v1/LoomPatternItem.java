@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 /**
  * The Banner++ equivalent of BannerPatternItem.
  */
-public class LoomPatternItem extends Item {
+public class LoomPatternItem extends Item implements LoomPatternProvider {
 	private final LoomPattern pattern;
 
 	public LoomPatternItem(LoomPattern pattern, Item.Settings settings) {
@@ -24,6 +24,7 @@ public class LoomPatternItem extends Item {
 		this.pattern = checkNotNull(pattern);
 	}
 
+	@Override
 	public final LoomPattern getPattern() {
 		return pattern;
 	}
