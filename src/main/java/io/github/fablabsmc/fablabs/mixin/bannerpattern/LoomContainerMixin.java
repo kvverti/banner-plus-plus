@@ -38,13 +38,13 @@ import net.minecraft.util.DyeColor;
 public abstract class LoomContainerMixin extends ScreenHandler {
 	@Shadow
 	@Final
-	private Property selectedPattern;
+	Property selectedPattern;
 	@Shadow
 	@Final
-	private Slot bannerSlot;
+	Slot bannerSlot;
 	@Shadow
 	@Final
-	private Slot dyeSlot;
+	Slot dyeSlot;
 	@Shadow
 	@Final
 	private Slot patternSlot;
@@ -164,11 +164,11 @@ public abstract class LoomContainerMixin extends ScreenHandler {
 		ItemStack patternStack = this.patternSlot.getStack();
 
 		// only run for special loom patterns
-		if (!patternStack.isEmpty() && patternStack.getItem() instanceof LoomPatternProvider) {
+		if (!patternStack.isEmpty() && patternStack.getItem() instanceof LoomPatternProvider provider) {
 			boolean overfull = BannerBlockEntity.getPatternCount(banner) >= patternLimit;
 
 			if (!overfull) {
-				LoomPattern pattern = ((LoomPatternProvider) patternStack.getItem()).getPattern();
+				LoomPattern pattern = provider.getPattern();
 				this.selectedPattern.set(-LoomPatternsInternal.getLoomIndex(pattern) - (1 + BannerPattern.LOOM_APPLICABLE_COUNT));
 			} else {
 				this.selectedPattern.set(0);
