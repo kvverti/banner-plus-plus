@@ -27,7 +27,7 @@ public abstract class BuiltinModelItemRendererMixin {
 			)
 	)
 	private void setBppLoomPatterns(ItemStack itemStack, ModelTransformation.Mode mode, MatrixStack matrixStack, VertexConsumerProvider provider, int i, int j, CallbackInfo info) {
-		NbtList tag = LoomPatternConversions.getLoomPatternTag(itemStack);
+		NbtList tag = LoomPatternConversions.getLoomPatternNbt(itemStack);
 		LoomPatternRenderContext.setLoomPatterns(LoomPatternConversions.makeLoomPatternData(tag));
 	}
 }

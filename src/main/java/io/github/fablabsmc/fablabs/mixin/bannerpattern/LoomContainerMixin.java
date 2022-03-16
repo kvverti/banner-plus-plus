@@ -197,7 +197,7 @@ public abstract class LoomContainerMixin extends ScreenHandler {
 				DyeColor color = ((DyeItem) dyeStack.getItem()).getColor();
 				ItemStack output = bannerStack.copy();
 				output.setCount(1);
-				NbtCompound beTag = output.getOrCreateSubTag("BlockEntityTag");
+				NbtCompound beTag = output.getOrCreateSubNbt("BlockEntityTag");
 				NbtList loomPatterns;
 
 				if (beTag.contains(LoomPatternContainer.NBT_KEY, 9)) {

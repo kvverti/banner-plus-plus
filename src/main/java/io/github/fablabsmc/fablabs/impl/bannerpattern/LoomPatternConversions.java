@@ -23,8 +23,8 @@ public final class LoomPatternConversions {
 	 *
 	 * @return the loom pattern tag, or null if it is not present.
 	 */
-	public static NbtList getLoomPatternTag(ItemStack stack) {
-		NbtCompound tag = stack.getSubTag("BlockEntityTag");
+	public static NbtList getLoomPatternNbt(ItemStack stack) {
+		NbtCompound tag = stack.getSubNbt("BlockEntityTag");
 
 		if (tag != null && tag.contains(LoomPatternContainer.NBT_KEY, 9)) {
 			return tag.getList(LoomPatternContainer.NBT_KEY, 10);
@@ -36,13 +36,13 @@ public final class LoomPatternConversions {
 	/**
 	 * Parses the given NBT data into a list of LoomPatternData objects.
 	 *
-	 * @param tag a nullable NbtList with loom pattern data
+	 * @param nbt a nullable NbtList with loom pattern data
 	 */
-	public static List<LoomPatternData> makeLoomPatternData(NbtList tag) {
+	public static List<LoomPatternData> makeLoomPatternData(NbtList nbt) {
 		List<LoomPatternData> res = new ArrayList<>();
 
-		if (tag != null) {
-			for (NbtElement t : tag) {
+		if (nbt != null) {
+			for (NbtElement t : nbt) {
 				NbtCompound patternTag = (NbtCompound) t;
 				LoomPattern pattern = LoomPatterns.REGISTRY.get(new Identifier(patternTag.getString("Pattern")));
 

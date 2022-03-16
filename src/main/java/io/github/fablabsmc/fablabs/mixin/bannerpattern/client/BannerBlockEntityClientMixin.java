@@ -50,7 +50,7 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
 	 */
 	@Inject(method = "readFrom", at = @At("RETURN"))
 	private void bppReadPatternFromItemStack(ItemStack stack, DyeColor color, CallbackInfo info) {
-		((Internal) this).bannerpp_setLoomPatternTag(LoomPatternConversions.getLoomPatternTag(stack));
+		((Internal) this).bannerpp_setLoomPatternTag(LoomPatternConversions.getLoomPatternNbt(stack));
 	}
 
 	/**
@@ -62,7 +62,7 @@ public abstract class BannerBlockEntityClientMixin extends BlockEntity implement
 		NbtList tag = ((Internal) this).bannerpp_getLoomPatternTag();
 
 		if (tag != null) {
-			stack.getOrCreateSubTag("BlockEntityTag")
+			stack.getOrCreateSubNbt("BlockEntityTag")
 					.put(NBT_KEY, tag);
 		}
 	}
