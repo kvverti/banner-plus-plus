@@ -133,11 +133,9 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 	 * Write Banner++ data to tag.
 	 */
 	@Inject(method = "writeNbt", at = @At("RETURN"))
-	private void addBppPatternData(CallbackInfoReturnable<NbtCompound> info) {
-		NbtCompound tag = info.getReturnValue();
-
-		if (tag != null) {
-			tag.put(LoomPatternContainer.NBT_KEY, loomPatternsTag);
+	private void addBppPatternData(NbtCompound nbt, CallbackInfo ci) {
+		if (nbt != null) {
+			nbt.put(LoomPatternContainer.NBT_KEY, loomPatternsTag);
 		}
 	}
 
