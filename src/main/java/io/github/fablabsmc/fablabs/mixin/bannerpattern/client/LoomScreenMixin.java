@@ -124,7 +124,7 @@ public abstract class LoomScreenMixin extends HandledScreen<LoomScreenHandler> {
 	private void saveLoomPatterns(CallbackInfo info) {
 		if (this.bannerPatterns != null) {
 			ItemStack banner = (this.handler).getOutputSlot().getStack();
-			NbtList ls = LoomPatternConversions.getLoomPatternTag(banner);
+			NbtList ls = LoomPatternConversions.getLoomPatternNbt(banner);
 			loomPatterns = LoomPatternConversions.makeLoomPatternData(ls);
 		} else {
 			loomPatterns = Collections.emptyList();
@@ -140,7 +140,7 @@ public abstract class LoomScreenMixin extends HandledScreen<LoomScreenHandler> {
 	 * a Banner++ loom pattern (which is negative).
 	 */
 	@ModifyVariable(
-			method = "method_22692",
+			method = "drawBanner",
 			at = @At(value = "LOAD", ordinal = 0),
 			ordinal = 0
 	)
@@ -162,7 +162,7 @@ public abstract class LoomScreenMixin extends HandledScreen<LoomScreenHandler> {
 	 * pattern in the item NBT instead of a vanilla pattern.
 	 */
 	@Redirect(
-			method = "method_22692",
+			method = "drawBanner",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/nbt/NbtCompound;put(Ljava/lang/String;Lnet/minecraft/nbt/NbtElement;)Lnet/minecraft/nbt/NbtElement;",
@@ -206,13 +206,13 @@ public abstract class LoomScreenMixin extends HandledScreen<LoomScreenHandler> {
 
 	/**
 	 * The dye pattern loop has positive indices, we negate the indices that
-	 * represent Banner++ loom patterns before passing them to method_22692.
+	 * represent Banner++ loom patterns before passing them to drawBanner.
 	 */
 	@ModifyArg(
 			method = "drawBackground",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/screen/ingame/LoomScreen;method_22692(III)V",
+					target = "Lnet/minecraft/client/gui/screen/ingame/LoomScreen;drawBanner(III)V",
 					ordinal = 0
 			),
 			index = 0

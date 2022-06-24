@@ -1,43 +1,25 @@
-
 plugins {
-	id 'fabric-loom' version '0.8-SNAPSHOT'
+	id 'fabric-loom' version '0.12-SNAPSHOT'
 	id 'maven-publish'
-	id "com.jfrog.artifactory" version "4.21.0"
 	id "checkstyle"
 }
 
-repositories {
-	maven {
-		url 'https://jitpack.io'
-	}
-}
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
-
-if(rootProject.file('private.gradle').exists()) { //Publishing details
-	apply from: 'private.gradle'
-}
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
 version = "${project.mod_version}+mc.${project.minecraft_version}"
 group = project.maven_group
 
-minecraft {
-}
-
 dependencies {
-	//to change the versions see the gradle.properties file
+	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modCompileOnly "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	modRuntime "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
-	// You may need to force-disable transitiveness on them.
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
 checkstyle {
@@ -47,7 +29,6 @@ checkstyle {
 
 processResources {
 	inputs.property "version", project.version
-	exclude "**/*.xcf"
 
 	filesMatching("fabric.mod.json") {
 		expand "version": project.version
@@ -58,79 +39,37 @@ runClient {
 	jvmArgs = ["-ea:io.github.fablabsmc.fablabs..."]
 }
 
+
 // ensure that the encoding is set to UTF-8, no matter what the system default is
 // this fixes some edge cases with special characters not displaying correctly
 // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
 tasks.withType(JavaCompile) {
+	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
+	it.options.release = 17
 	options.encoding = "UTF-8"
 }
 
-// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-// if it is present.
-// If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = "sources"
-	from sourceSets.main.allSource
-	exclude "**/*.xcf"
+
+java {
+	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+	// if it is present.
+	// If you remove this line, sources will not be generated.
+	withSourcesJar()
 }
+
 
 jar {
 	from "LICENSE"
 }
 
-// configure the maven publication
 publishing {
 	publications {
-		maven(MavenPublication) {
-			// add all the jars that should be included when publishing to maven
-			//artifact(jar) {
-			//	builtBy remapJar
-			//}
-			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar") { //release jar - file location not provided anywhere in loom
-				classifier null
-				builtBy remapJar
-			}
-
-			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}-dev.jar") { //release jar - file location not provided anywhere in loom
-				classifier "dev"
-				builtBy remapJar
-			}
-
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
+		mavenJava(MavenPublication) {
+			from components.java
 		}
 	}
 
-	// select the repositories you want to publish to
 	repositories {
-		// uncomment to publish to the local maven
-		// mavenLocal()
-	}
-}
-
-artifactory {
-	if (project.hasProperty("artifactoryUsername")) {
-		contextUrl = "http://server.bbkr.space:8081/artifactory/"
-		publish {
-			repository {
-				if (version.contains("SNAPSHOT")) {
-					repoKey = "libs-snapshot"
-				} else {
-					repoKey = "libs-release"
-				}
-
-				username = artifactoryUsername
-				password = artifactoryPassword
-			}
-			defaults {
-				publications("maven")
-
-				publishArtifacts = true
-				publishPom = true
-			}
-		}
-	} else {
-		println "Cannot configure artifactory; please define ext.artifactoryUsername and ext.artifactoryPassword before running artifactoryPublish"
+		mavenLocal()
 	}
 }

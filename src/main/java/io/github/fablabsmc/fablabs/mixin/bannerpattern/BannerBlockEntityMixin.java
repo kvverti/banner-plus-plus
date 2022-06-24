@@ -79,7 +79,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 	 */
 	@Inject(method = "getPatternCount", at = @At("RETURN"), cancellable = true)
 	private static void modifyPatternCount(ItemStack stack, CallbackInfoReturnable<Integer> info) {
-		NbtCompound beTag = stack.getSubTag("BlockEntityTag");
+		NbtCompound beTag = stack.getSubNbt("BlockEntityTag");
 
 		if (beTag != null && beTag.contains(LoomPatternContainer.NBT_KEY)) {
 			int count = beTag.getList(LoomPatternContainer.NBT_KEY, 10).size();
@@ -94,7 +94,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 	 */
 	@Inject(method = "loadFromItemStack", at = @At("HEAD"), cancellable = true)
 	private static void cleanBppLoomPattern(ItemStack stack, CallbackInfo info) {
-		NbtCompound beTag = stack.getSubTag("BlockEntityTag");
+		NbtCompound beTag = stack.getSubNbt("BlockEntityTag");
 
 		if (beTag != null) {
 			NbtList loomPatterns = beTag.getList(LoomPatternContainer.NBT_KEY, 10);
@@ -117,7 +117,7 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 
 			if (loomPatterns.isEmpty()) {
 				if (patterns.isEmpty()) {
-					stack.removeSubTag("BlockEntityTag");
+					stack.removeSubNbt("BlockEntityTag");
 				} else {
 					beTag.remove(LoomPatternContainer.NBT_KEY);
 				}
@@ -133,11 +133,9 @@ public abstract class BannerBlockEntityMixin extends BlockEntity implements Loom
 	 * Write Banner++ data to tag.
 	 */
 	@Inject(method = "writeNbt", at = @At("RETURN"))
-	private void addBppPatternData(CallbackInfoReturnable<NbtCompound> info) {
-		NbtCompound tag = info.getReturnValue();
-
-		if (tag != null) {
-			tag.put(LoomPatternContainer.NBT_KEY, loomPatternsTag);
+	private void addBppPatternData(NbtCompound nbt, CallbackInfo ci) {
+		if (nbt != null) {
+			nbt.put(LoomPatternContainer.NBT_KEY, loomPatternsTag);
 		}
 	}
 

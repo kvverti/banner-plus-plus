@@ -41,7 +41,7 @@ public abstract class BannerItemMixin extends WallStandingBlockItem {
 	)
 	private static void preAppendBppLoomPatterns(ItemStack stack, List<Text> lines, CallbackInfo info) {
 		nextLoomPatternIndex = 0;
-		NbtCompound beTag = stack.getSubTag("BlockEntityTag");
+		NbtCompound beTag = stack.getSubNbt("BlockEntityTag");
 
 		if (beTag != null && beTag.contains(LoomPatternContainer.NBT_KEY)) {
 			loomPatterns = beTag.getList(LoomPatternContainer.NBT_KEY, 10);
